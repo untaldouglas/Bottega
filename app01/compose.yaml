@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    ports:
+      - "4173:4173"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,12 @@
+# Evidencia operativa y secretos
+runs/
+.env
+.env.*
+*.secret
+*.token
+*.log
+
+# Herramientas locales
+.venv/
+__pycache__/
+.pytest_cache/

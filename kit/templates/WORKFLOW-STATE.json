@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "state": "draft",
+  "allowed_states": ["draft", "preflight", "in_progress", "validation", "blocked", "accepted", "closed"],
+  "counters": {
+    "delivery_attempt": 0,
+    "provider_retry": 0,
+    "validation_attempt": 0,
+    "operational_cleanup": 0
+  },
+  "circuit_breaker": {
+    "status": "closed",
+    "first_429_opens": true,
+    "fallback_authorized": false
+  },
+  "updated_at": null
+}

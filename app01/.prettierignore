@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+automation
+docs/05-validation-report.md
+docs/05-release-checklist.md

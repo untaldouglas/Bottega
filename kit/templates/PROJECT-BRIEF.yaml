@@ -1,0 +1,31 @@
+schema_version: "1.0"
+project:
+  id: "BOTTEGA-EXAMPLE-001"
+  product_name: "Producto de ejemplo"
+  slug: "producto-de-ejemplo"
+  suggested_repo: "usuario-ejemplo/producto-de-ejemplo"
+  owner: "Owner por asignar"
+  organization: "organizacion-ejemplo"
+  privacy: "private"
+scope:
+  included:
+    - "Flujo mínimo verificable"
+  excluded:
+    - "Datos reales"
+data:
+  classification: "synthetic"
+  sources: []
+  retention: "local"
+risks:
+  - id: "R-001"
+    description: "Dependencia de proveedor externo"
+    mitigation: "Circuit breaker y fallback autorizado"
+gates:
+  required: ["preflight", "acceptance", "security"]
+authorization:
+  github:
+    allowed: false
+    create_private_repo: false
+    approved_by: ""
+  fallback_allowed: false
+  production_deploy_allowed: false

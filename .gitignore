@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Node (dentro de app01)
+app01/node_modules/
+app01/dist/
+app01/coverage/
+app01/playwright-report/
+app01/test-results/
+
+# Entorno local
+.env
+.env.*
+*.local

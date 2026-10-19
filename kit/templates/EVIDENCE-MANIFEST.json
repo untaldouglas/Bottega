@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "run_id": "RUN-YYYYMMDD-HHMMSS",
+  "attempt": 1,
+  "created_at": "",
+  "immutable": true,
+  "payload": {
+    "gate": "preflight",
+    "command": "",
+    "exit_code": 0,
+    "artifacts": []
+  },
+  "sha256": ""
+}

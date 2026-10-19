@@ -1,0 +1,16 @@
+schema_version: "1.0"
+requirements:
+  - id: "CA-001"
+    requirement: "El scaffold es reproducible y seguro"
+    test: "python3 -m unittest discover -s tests -v"
+    level: "required"
+    evidence:
+      planned: "runs/<run-id>/attempts/<n>/manifest.json"
+      executed: ""
+  - id: "CA-002"
+    requirement: "No se crea repositorio remoto sin autorización explícita"
+    test: "python3 scripts/init_bottega_project.py --dry-run"
+    level: "required"
+    evidence:
+      planned: "runs/<run-id>/attempts/<n>/manifest.json"
+      executed: ""

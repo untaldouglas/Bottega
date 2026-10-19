@@ -1,0 +1,10 @@
+name: Bug report
+description: Report a reproducible defect
+body:
+  - type: textarea
+    attributes:
+      {
+        label: Reproduction,
+        description: Include synthetic steps and expected/actual behavior,
+      }
+    validations: { required: true }

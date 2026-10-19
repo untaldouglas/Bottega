@@ -1,0 +1,32 @@
+{
+  "name": "idea-prioritizer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --check .",
+    "validate": "npm run lint && npm run typecheck && npm run test && npm run test:e2e && npm run build && npm run security:scan && npm run licenses",
+    "security:scan": "node scripts/scan-secrets.mjs",
+    "hallmark:check": "node scripts/hallmark-packaging-check.mjs",
+    "licenses": "node scripts/audit-licenses.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^26.6.5",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  }
+}
