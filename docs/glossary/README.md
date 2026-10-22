@@ -61,3 +61,6 @@ Registro canónico: [`terms.yaml`](terms.yaml). Las anclas HTML son estables.
 `terms.yaml` es la fuente canónica (JSON válido como YAML 1.2). Cada término requiere `id`, `label`, `aliases`, `acronym`, `anchor`, `category`, `definition`, `context`, `source`, `related`, `owner`, `status`, `reviewed_on`, `review_due`, `introduced_in` y `deprecated_by`. IDs y anclas son estables; `owner` siempre es un rol o equipo.
 
 Enlaza solo la primera aparición significativa por documento o sección autónoma. No enlaces encabezados, tablas ni bloques de código. Ejecuta `make glossary-check`, `make docs-check` y `python scripts/glossary.py render --check` antes de abrir una PR.
+
+El archivo `GLOSSARY.md` de la raíz es un glosario legible por agentes generado desde este mismo registro; edita `terms.yaml` y ejecuta `make docs`, no edites `GLOSSARY.md` a mano.
+

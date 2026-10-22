@@ -151,8 +151,8 @@ def entry_body(t):
     return f'\n<a id="{t["anchor"]}"></a>\n\n# {t["label"]}\n\n**Aliases:** {aliases}\n**Categoría:** {t["category"]}\n**Propietario:** {t["owner"]}\n**Revisión:** {t["reviewed_on"]} (próxima: {t["review_due"]})\n\n{t["definition"]}\n\n**Contexto:** {t["context"]}\n\n**Fuente:** {", ".join(sources)}\n\n**Relacionado:** {related}\n'
 def entry_text(t): return f'---\nid: {t["id"]}\nlabel: {t["label"]}\nanchor: {t["anchor"]}\nstatus: {t["status"]}\n---'+entry_body(t)
 
-def render(root, check=False):
-    data=load_registry(root); terms=sorted(data['terms'],key=lambda x:(x['label'].casefold(),x['id'])); out=['# Glosario enlazable','','Registro canónico: [`terms.yaml`](terms.yaml). Las anclas HTML son estables.','','## Índice','']; current=None
+def render_index(terms):
+    out=['# Glosario enlazable','','Registro canónico: [`terms.yaml`](terms.yaml). Las anclas HTML son estables.','','## Índice','']; current=None
     for t in terms:
         if t.get('status')=='draft': continue
         letter=t['label'][0].upper()
@@ -161,13 +161,32 @@ def render(root, check=False):
     out += ['','## Tabla de términos','','| Término | Categoría | Estado |','| --- | --- | --- |']
     for t in terms:
         if t.get('status')!='draft': out.append(f'| [{t["label"]}](entries/{t["id"]}.md#{t["anchor"]}) | {t["category"]} | {t["status"]} |')
-    out += ['','## Esquema y uso','','`terms.yaml` es la fuente canónica (JSON válido como YAML 1.2). Cada término requiere `id`, `label`, `aliases`, `acronym`, `anchor`, `category`, `definition`, `context`, `source`, `related`, `owner`, `status`, `reviewed_on`, `review_due`, `introduced_in` y `deprecated_by`. IDs y anclas son estables; `owner` siempre es un rol o equipo.','','Enlaza solo la primera aparición significativa por documento o sección autónoma. No enlaces encabezados, tablas ni bloques de código. Ejecuta `make glossary-check`, `make docs-check` y `python scripts/glossary.py render --check` antes de abrir una PR.']
-    content='\n'.join(out)+'\n'; path=root/'docs/glossary/README.md'
-    if check: return path.is_file() and content==path.read_text(encoding='utf-8'),content
-    path.write_text(content,encoding='utf-8')
+    out += ['','## Esquema y uso','','`terms.yaml` es la fuente canónica (JSON válido como YAML 1.2). Cada término requiere `id`, `label`, `aliases`, `acronym`, `anchor`, `category`, `definition`, `context`, `source`, `related`, `owner`, `status`, `reviewed_on`, `review_due`, `introduced_in` y `deprecated_by`. IDs y anclas son estables; `owner` siempre es un rol o equipo.','','Enlaza solo la primera aparición significativa por documento o sección autónoma. No enlaces encabezados, tablas ni bloques de código. Ejecuta `make glossary-check`, `make docs-check` y `python scripts/glossary.py render --check` antes de abrir una PR.','','El archivo `GLOSSARY.md` de la raíz es un glosario legible por agentes generado desde este mismo registro; edita `terms.yaml` y ejecuta `make docs`, no edites `GLOSSARY.md` a mano.','']
+    return '\n'.join(out)+'\n'
+
+def render_glossary_md(terms):
+    out=['# Glosario','','Registro canónico: [`docs/glossary/terms.yaml`](docs/glossary/terms.yaml). Este archivo se genera desde el registro para que los agentes lean el lenguaje del dominio; edita el registro y ejecuta `make docs`, no este archivo.','']
+    for t in terms:
+        if t.get('status')=='draft': continue
+        out += [f'## {t["label"]}','']
+        aliases=t.get('aliases') or []
+        if aliases: out += [f'- **Aliases:** {"; ".join(aliases)}']
+        if t.get('acronym'): out += [f'- **Acrónimo:** {t["acronym"]}']
+        if t.get('status') in {'deprecated','superseded'}: out += [f'- **Estado:** {t["status"]} (sustituido por {t.get("deprecated_by") or "—"})']
+        out += [f'- **Definición:** {t["definition"]}','',f'Detalle: [`docs/glossary/entries/{t["id"]}.md`](docs/glossary/entries/{t["id"]}.md#{t["anchor"]})','']
+    return '\n'.join(out)+'\n'
+
+def render(root, check=False):
+    data=load_registry(root); terms=sorted(data['terms'],key=lambda x:(x['label'].casefold(),x['id']))
+    index_path=root/'docs/glossary/README.md'; glossary_path=root/'GLOSSARY.md'
+    artifacts={index_path: render_index(terms), glossary_path: render_glossary_md(terms)}
+    if check:
+        ok=all(path.is_file() and content==path.read_text(encoding='utf-8') for path,content in artifacts.items())
+        return ok, artifacts[index_path]
+    for path,content in artifacts.items(): path.write_text(content,encoding='utf-8')
     for t in terms:
         if t.get('status')!='draft': (root/'docs/glossary/entries'/f'{t["id"]}.md').write_text(entry_text(t),encoding='utf-8')
-    return True,content
+    return True, artifacts[index_path]
 
 def report(root):
     data=load_registry(root); result,code=validate(root); terms=data['terms']; today=dt.date.today(); active=[t for t in terms if t.get('status')=='active']; stale=sum(1 for t in active if (parse_date(t.get('review_due')) or today)<today); broken=[x for x in result['errors'] if x.startswith(('enlace roto:','ancla rota:'))]; referenced={r for t in terms for r in t.get('related',[])}
@@ -191,7 +210,7 @@ def main(argv=None):
     args=p.parse_args(argv); root=args.root.resolve()
     try:
         if args.command=='check': result,code=validate(root,args.strict)
-        elif args.command=='render': ok,_=render(root,args.check); result={'errors':[] if ok else ['render drift: README.md no coincide con registry'],'warnings':[]}; code=EXIT_OK if ok else EXIT_INVALID
+        elif args.command=='render': ok,_=render(root,args.check); result={'errors':[] if ok else ['render drift: README.md o GLOSSARY.md no coincide con registry'],'warnings':[]}; code=EXIT_OK if ok else EXIT_INVALID
         elif args.command=='add': result,code=add(args,root)
         else: result,code=report(root)
     except (FileNotFoundError,OSError,ValueError) as exc: result=error(f'archivo faltante o entorno incompatible: {exc}'); code=EXIT_MISSING
