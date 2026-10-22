@@ -6,6 +6,15 @@ Bottega convierte una necesidad de software en un producto terminado, probado, d
 
 No automatiza decisiones: las personas definen el alcance, aprueban cada puerta y deciden el resultado final.
 
+## Primeros pasos
+
+```bash
+make bootstrap   # valida el entorno e imprime el checklist de instalación
+make doctor      # confirma que Bottega quedó listo (solo lectura)
+```
+
+La guía completa de cero a proficiente está en `docs/ONBOARDING.md`.
+
 ## Roles
 
 | Bot | Función |
@@ -29,10 +38,12 @@ Cada etapa termina en un gate que solo una persona autoriza. La implementación 
 
 ## Estructura del repositorio
 
+- `docs/ONBOARDING.md` — rampa de cero a proficiente.
 - `GUIA-DE-USO.md` — guía canónica de operación.
+- `GLOSSARY.md` — glosario legible por agentes (fuente: `docs/glossary/terms.yaml`).
+- `docs/diagrama-skills-matt-pocock.md` — mapa de skills por rol.
 - `kit/` — kit de orquestación (preflight, init, gate_check).
-- `docs/glossary/` — glosario técnico.
-- `scripts/` y `Makefile` — controles de documentación y CI.
+- `scripts/` y `Makefile` — controles de documentación, CI, doctor y bootstrap.
 - `comunicacion/` — documentación mercadológica.
 - `app01/` — ejemplo probado (Idea Prioritizer).
 
@@ -58,10 +69,12 @@ npm run validate
 
 ## Documentación
 
+- Onboarding: `docs/ONBOARDING.md`.
 - Técnica y operativa: `GUIA-DE-USO.md`, `docs/`, `kit/`.
+- Glosario: `GLOSSARY.md`.
 - Mercadológica: `comunicacion/`.
 - Del ejemplo: `app01/docs/`.
 
 ## Estado
 
-Repositorio privado. La publicación pública y la adopción institucional requieren autorización explícita por separado.
+Repositorio público. Publicar productos derivados y la adopción institucional del método requieren autorización explícita por separado.

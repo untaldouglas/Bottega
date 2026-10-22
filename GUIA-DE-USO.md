@@ -5,6 +5,8 @@
 **Sección:** Soluciones de Software
 **Grupo:** Bottega
 
+> ¿Primera vez? Sigue `docs/ONBOARDING.md` y ejecuta `make bootstrap` y `make doctor`.
+
 ## Qué es
 
 Bottega es un grupo de seis Bots nuevos y especializados que convierten una necesidad de software en un producto terminado, probado, documentado y listo para compartirse bajo buenas prácticas open source. Usted conduce; cada Bot ejecuta una sola especialidad y deja evidencia en el repositorio del proyecto.
@@ -448,7 +450,7 @@ idea-prioritizer/
 
 ## Operación canónica con el kit de mejoras
 
-Antes de iniciar una iniciativa, el Director confirma el alcance y se crea un
+Valida los prerrequisitos del método con `make doctor` (o `make bootstrap` para el checklist de instalación de cero). Antes de iniciar una iniciativa, el Director confirma el alcance y se crea un
 `PROJECT-BRIEF.yaml` con datos sintéticos, riesgos, gates y autorizaciones. El
 preflight es obligatorio y no destructivo; desde la raíz de `kit/` se
 ejecuta:
