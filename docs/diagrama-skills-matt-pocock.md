@@ -44,7 +44,7 @@ Estado al cierre del método v1 (pos-retrospectiva desacoplada). Derivado de `GU
                     CIERRE HUMANO (ADOPTAR / ADAPTAR / DETENER)
                                 │
  ┌──────────────────────────────▼──────────────────────────────┐
- │ RETROSPECTIVA · sin Bot (operador / Director)                │  → backlog de mejoras
+ │ RETROSPECTIVA · persona autorizada (no un Bot)               │  → backlog de mejoras
  │   retro (+ writing-for-agents)                               │
  └─────────────────────────────────────────────────────────────┘
 ```
@@ -61,7 +61,7 @@ Estado al cierre del método v1 (pos-retrospectiva desacoplada). Derivado de `GU
 | Filippo Brunelleschi | Arquitectura técnica | `codebase-design`, `domain-modeling`, `improve-codebase-architecture`, `prototype` | M, M, U, M |
 | Michelangelo Buonarroti | Implementación y TDD | `implement`, `implement-spec`, `tdd`, `diagnosing-bugs`, `pr` | U, U, M, M, M |
 | Raffaello Sanzio | Revisión independiente | `code-review`, `triage`, `handoff`, `wait-what` | M, U, U, U |
-| — (operador / Director) | Retrospectiva (post-cierre) | `retro` | U |
+| — (persona autorizada: Director / ingeniero / operador) | Retrospectiva (post-cierre, no un Bot autónomo) | `retro` | U |
 
 ## 3. Capas transversales (no asignadas a un Bot)
 
@@ -76,7 +76,7 @@ ask-matt          ── router opcional: sugiere qué skill usar según la situ
 
 ## 4. Observaciones
 
-1. `retro` ya no está en Raffaello: quedó en una etapa propia, fuera del gate, posterior al cierre humano, sin auto-aplicación.
+1. `retro` ya no está en Raffaello: quedó en una etapa propia, fuera del gate, posterior al cierre humano. La ejecuta una persona autorizada (Director, ingeniero u operador), nunca un Bot de forma autónoma, y no se auto-aplica.
 2. `pr` alimenta el `REVIEW-PACKET.md` en Michelangelo; no es solo el cuerpo de una PR en GitHub.
 3. Donatello es el único rol híbrido: combina skills UX propias (no-Matt) con una sola skill Matt (`handoff`).
 4. `codebase-design` y `domain-modeling` se repiten en Leonardo y Filippo: son el vocabulario compartido de diseño profundo y de dominio.

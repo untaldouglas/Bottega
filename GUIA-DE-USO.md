@@ -360,7 +360,7 @@ Cada hallazgo se clasifica en una de estas categorías:
 - **herramientas/tokens**: se optimiza el flujo;
 - **información**: se habilita acceso de solo lectura.
 
-Reglas: la retrospectiva la ejecuta el operador o el Director sobre sesiones seleccionadas; no está asignada a un Bot de etapa. Nunca edita por sí misma perfiles, skills, CI ni reglas; cada hallazgo aceptado se implementa como una mejora separada con gate, y no se automatiza para autocorregirse.
+Reglas: la retrospectiva la ejecuta cualquier persona autorizada (Director, ingeniero u operador) sobre sesiones seleccionadas; nunca un Bot de forma autónoma. Un Bot puede asistir redactando hallazgos, pero aceptar, posponer o rechazar es decisión humana. No se auto-aplica: no edita por sí misma perfiles, skills, CI ni reglas; cada hallazgo aceptado se implementa como una mejora separada con gate.
 
 ---
 
