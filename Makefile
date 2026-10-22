@@ -1,4 +1,4 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
@@ -71,6 +71,14 @@ container-build:
 	docker compose -f $(APP_DIR)/compose.yaml build
 
 ci: validate smoke
+
+# Validación de prerrequisitos del método (solo lectura, idempotente).
+doctor:
+	python3 scripts/bottega_doctor.py
+
+# Doctor + checklist ordenado de instalación (cero a listo).
+bootstrap:
+	python3 scripts/bottega_doctor.py --bootstrap
 
 clean:
 	@for path in $(APP_DIR)/dist $(APP_DIR)/playwright-report $(APP_DIR)/test-results; do \
