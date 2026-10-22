@@ -1,0 +1,12 @@
+schema_version: "1.0"
+# Dossier de seams: antes de escribir cada prueba, declara qué detecta y qué no.
+# Una prueba sin "misses" declarado no cuenta como evidencia (contrato TDD negativo).
+seams:
+  - id: "SEAM-001"
+    seam: "<interfaz o módulo bajo prueba>"
+    catches: "<qué defecto detecta esta prueba>"
+    misses: "<qué defecto NO detecta esta prueba>"
+    fixture: "<fixture requerida, o 'ninguna'>"
+    red_expected: "<cómo se ve la prueba en rojo>"
+    green_expected: "<cómo se ve la prueba en verde>"
+    test: "<comando o archivo de prueba>"

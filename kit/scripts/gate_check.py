@@ -29,6 +29,8 @@ def main():
         if state.get("circuit_breaker",{}).get("first_429_opens") is not True: errors.append("política 429 ausente")
     manifest=root/"ACCEPTANCE-MANIFEST.yaml"
     if manifest.is_file() and "requirements:" not in manifest.read_text(): errors.append("manifiesto sin requirements")
+    seams=root/"TEST-SEAMS.yaml"
+    if seams.is_file() and "seams:" not in seams.read_text(): errors.append("dossier de seams sin sección seams")
     runs=root/"runs"
     evidence_count=0
     if runs.is_dir():

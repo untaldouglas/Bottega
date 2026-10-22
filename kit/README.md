@@ -13,7 +13,7 @@ python3 scripts/bottega_preflight.py --project ../mi-ejercicio --format markdown
 python3 scripts/gate_check.py --project ../mi-ejercicio --format markdown
 ```
 
-El scaffold crea los briefs, manifiestos, `REVIEW-PACKET.md` y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
+El scaffold crea los briefs, manifiestos, `REVIEW-PACKET.md`, `TEST-SEAMS.yaml` y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
 
 ## Flujo
 

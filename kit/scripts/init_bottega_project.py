@@ -13,6 +13,7 @@ FILES = {
     "WORKFLOW-STATE.json": TEMPLATES / "WORKFLOW-STATE.json",
     "templates/EVIDENCE-MANIFEST.json": TEMPLATES / "EVIDENCE-MANIFEST.json",
     "REVIEW-PACKET.md": TEMPLATES / "REVIEW-PACKET.md",
+    "TEST-SEAMS.yaml": TEMPLATES / "TEST-SEAMS.yaml",
 }
 
 def parse_args():

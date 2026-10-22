@@ -219,6 +219,10 @@ Usa implement-spec, implement, tdd, diagnosing-bugs y pr.
 
 Implementa mediante TDD: prueba roja, cambio mínimo, prueba verde, refactor.
 
+Antes de escribir cada prueba, declara en `TEST-SEAMS.yaml` el seam que cubre,
+qué defecto detecta y qué defecto NO detecta. Una prueba sin `misses` declarado
+no cuenta como evidencia de GATE 4.
+
 El repositorio debe incluir como mínimo:
 - código fuente;
 - pruebas unitarias, de componentes y end-to-end;
