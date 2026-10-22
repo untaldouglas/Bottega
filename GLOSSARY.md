@@ -59,6 +59,13 @@ Detalle: [`docs/glossary/entries/kanban.md`](docs/glossary/entries/kanban.md#glo
 
 Detalle: [`docs/glossary/entries/migration.md`](docs/glossary/entries/migration.md#glossary-migration)
 
+## Paquete de revisión
+
+- **Aliases:** review packet
+- **Definición:** Resumen mínimo de un cambio con Summary, Evidence y Merge Danger que alimenta la revisión independiente y el cuerpo de una solicitud de cambios.
+
+Detalle: [`docs/glossary/entries/review-packet.md`](docs/glossary/entries/review-packet.md#glossary-review-packet)
+
 ## Propietario
 
 - **Aliases:** owner; responsable
@@ -72,6 +79,13 @@ Detalle: [`docs/glossary/entries/owner.md`](docs/glossary/entries/owner.md#gloss
 - **Definición:** Versión identificable de un producto preparada para distribución según sus controles.
 
 Detalle: [`docs/glossary/entries/release.md`](docs/glossary/entries/release.md#glossary-release)
+
+## Retrospectiva
+
+- **Aliases:** retro
+- **Definición:** Práctica posterior al cierre que revisa sesiones reales para proponer mejoras al entorno del agente, sin emitir veredicto sobre el producto.
+
+Detalle: [`docs/glossary/entries/retrospective.md`](docs/glossary/entries/retrospective.md#glossary-retrospective)
 
 ## Revisión
 

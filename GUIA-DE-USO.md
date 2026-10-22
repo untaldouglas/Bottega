@@ -27,7 +27,7 @@ Raffaello Sanzio       → revisión independiente
 | Donatello | UX y diseño de producto | `discovery`, `flujos`, `arquitectura de información`, `prototipos`, `accesibilidad`, `pruebas de usabilidad`, `handoff` |
 | Filippo Brunelleschi | Arquitectura técnica | `codebase-design`, `improve-codebase-architecture`, `domain-modeling`, `prototype` |
 | Michelangelo Buonarroti | Implementación y TDD | `implement`, `implement-spec`, `tdd`, `diagnosing-bugs`, `pr` |
-| Raffaello Sanzio | Revisión independiente | `code-review`, `triage`, `retro`, `handoff`, `wait-what` |
+| Raffaello Sanzio | Revisión independiente | `code-review`, `triage`, `handoff`, `wait-what` |
 
 ## El flujo con gates
 
@@ -51,6 +51,10 @@ Raffaello: validación       → PASS / NEEDS_WORK / BLOCKED
 Correcciones ↔ nueva validación
    ↓
 Producto liberable
+   ↓
+Cierre humano             → ADOPTAR / ADAPTAR / DETENER
+   ↓
+Retrospectiva             → backlog de mejoras del método
 ```
 
 ## Reglas de operación
@@ -236,6 +240,11 @@ build, imagen Docker, contenedor, comprobación funcional, detención del
 contenedor, verificación de ausencia de secretos, y genera
 docs/04-implementation-report.md.
 
+Genera también `REVIEW-PACKET.md` (plantilla en `kit/templates/REVIEW-PACKET.md`)
+con Summary, Evidence y Merge Danger. Debe citar el HEAD exacto, el manifiesto
+de evidencia y la reversibilidad del cambio. Sin este paquete no se promueve a
+revisión independiente.
+
 No declares éxito si falla una comprobación. Reporta comandos reales,
 resultados, cobertura, archivos modificados y pendientes.
 ```
@@ -272,9 +281,9 @@ No aceptes el reporte de Michelangelo como evidencia suficiente. Inspecciona
 y reproduce.
 
 Lee requisitos, diseño, arquitectura, ADR, estrategia de pruebas, código,
-pruebas, documentación y docs/04-implementation-report.md.
+pruebas, documentación, `REVIEW-PACKET.md` y docs/04-implementation-report.md.
 
-Usa code-review, triage, retro, handoff y wait-what.
+Usa code-review, triage, handoff y wait-what.
 
 Debes: comprobar trazabilidad; ejecutar npm ci y npm run validate; pruebas
 end-to-end; build; construir y ejecutar el contenedor; probar el flujo
@@ -324,6 +333,34 @@ NEEDS_WORK o BLOCKED.
 ```
 
 Repita hasta obtener `PASS`.
+
+---
+
+## Retrospectiva (fuera del gate)
+
+La retrospectiva no forma parte de la validación del producto. Se ejecuta después del cierre humano (ADOPTAR / ADAPTAR / DETENER) y revisa sesiones reales para proponer mejoras al entorno del agente, nunca para reabrir el veredicto.
+
+```text
+Veredicto del producto (PASS / NEEDS_WORK / BLOCKED)
+   ↓
+Cierre humano (ADOPTAR / ADAPTAR / DETENER)
+   ↓
+Selección de sesiones (una fallida o representativa)
+   ↓
+Retrospectiva → hallazgos clasificados por severidad
+   ↓
+Backlog de mejoras del método (ACEPTAR / POSPONER / RECHAZAR)
+```
+
+Cada hallazgo se clasifica en una de estas categorías:
+
+- **mecánica**: se convierte en lint, test, hook o CI;
+- **criterio**: se documenta para revisión;
+- **navegación**: se añade un puntero;
+- **herramientas/tokens**: se optimiza el flujo;
+- **información**: se habilita acceso de solo lectura.
+
+Reglas: la retrospectiva la ejecuta el operador o el Director sobre sesiones seleccionadas; no está asignada a un Bot de etapa. Nunca edita por sí misma perfiles, skills, CI ni reglas; cada hallazgo aceptado se implementa como una mejora separada con gate, y no se automatiza para autocorregirse.
 
 ---
 
@@ -432,6 +469,7 @@ python3 scripts/init_bottega_project.py \
 
 Cada iniciativa debe conservar estos artefactos: `PROJECT-BRIEF.yaml`,
 `ACCEPTANCE-MANIFEST.yaml` (requisito → prueba → evidencia),
+`REVIEW-PACKET.md` (Summary → Evidence → Merge Danger),
 `WORKFLOW-STATE.json` y `runs/<run-id>/attempts/<n>/manifest.json`. El
 manifiesto de evidencia se crea con hash y no se edita después; cualquier
 corrección genera un intento nuevo. `gate_check.py` verifica los archivos, los

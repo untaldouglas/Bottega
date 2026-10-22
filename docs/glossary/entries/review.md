@@ -19,4 +19,4 @@ Evaluación independiente de contenido o cambios frente a criterios acordados.
 
 **Fuente:** [kit/README.md](../../../kit/README.md)
 
-**Relacionado:** [gate](gate.md), [evidence](evidence.md)
+**Relacionado:** [gate](gate.md), [evidence](evidence.md), [review-packet](review-packet.md), [retrospective](retrospective.md)

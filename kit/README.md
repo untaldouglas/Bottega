@@ -13,7 +13,7 @@ python3 scripts/bottega_preflight.py --project ../mi-ejercicio --format markdown
 python3 scripts/gate_check.py --project ../mi-ejercicio --format markdown
 ```
 
-El scaffold crea los briefs, manifiestos y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
+El scaffold crea los briefs, manifiestos, `REVIEW-PACKET.md` y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
 
 ## Flujo
 
@@ -22,6 +22,8 @@ El scaffold crea los briefs, manifiestos y `runs/`. GitHub no se toca salvo que 
 3. Registrar cada intento en `runs/<run-id>/attempts/<n>/manifest.json`; los manifiestos son inmutables después de creados.
 4. Ejecutar `gate_check.py` para validar coherencia del estado, aceptación, hashes y evidencia.
 5. Marcar gates únicamente con evidencia ejecutada. Separar contadores `delivery_attempt`, `provider_retry`, `validation_attempt` y `operational_cleanup`.
+
+Al cerrar la implementación, se completa `REVIEW-PACKET.md` (Summary → Evidence → Merge Danger) y se entrega junto con el manifiesto de evidencia; sin él no se promueve a revisión independiente. La retrospectiva se ejecuta después del cierre humano, fuera del gate, y produce mejoras del método que una persona acepta, pospone o rechaza.
 
 El Kanban debe modelar dependencias Andrea → Leonardo → Filippo → Michelangelo
 → Raffaello y conservar un Bot por etapa. Raffaello no se habilita hasta

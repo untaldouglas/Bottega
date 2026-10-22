@@ -12,6 +12,7 @@ FILES = {
     "ACCEPTANCE-MANIFEST.yaml": TEMPLATES / "ACCEPTANCE-MANIFEST.yaml",
     "WORKFLOW-STATE.json": TEMPLATES / "WORKFLOW-STATE.json",
     "templates/EVIDENCE-MANIFEST.json": TEMPLATES / "EVIDENCE-MANIFEST.json",
+    "REVIEW-PACKET.md": TEMPLATES / "REVIEW-PACKET.md",
 }
 
 def parse_args():
@@ -40,7 +41,7 @@ def main():
         print("error: crear repo requiere --repo-name proporcionado por el usuario", file=sys.stderr)
         return 2
     target = a.target.expanduser().resolve()
-    plan = [f"crear directorio {target}", "copiar 3 plantillas", "crear runs/ y .gitkeep"]
+    plan = [f"crear directorio {target}", f"copiar {len(FILES)} plantillas", "crear runs/ y .gitkeep"]
     if a.init_git: plan.append("inicializar git local")
     if a.create_private_repo: plan.append(f"crear repositorio privado {a.org}/{a.repo_name}")
     if a.dry_run:

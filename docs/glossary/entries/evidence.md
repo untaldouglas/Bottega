@@ -19,4 +19,4 @@ Salida reproducible que demuestra el resultado de una acción, prueba o decisió
 
 **Fuente:** [kit/README.md](../../../kit/README.md)
 
-**Relacionado:** [acceptance-criteria](acceptance-criteria.md), [baseline](baseline.md), [gate](gate.md), [owner](owner.md), [review](review.md)
+**Relacionado:** [acceptance-criteria](acceptance-criteria.md), [baseline](baseline.md), [gate](gate.md), [owner](owner.md), [review](review.md), [review-packet](review-packet.md)

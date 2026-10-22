@@ -28,10 +28,12 @@ Registro canónico: [`terms.yaml`](terms.yaml). Las anclas HTML son estables.
 - [Migración](entries/migration.md#glossary-migration) — proceso (active)
 ### P
 
+- [Paquete de revisión](entries/review-packet.md#glossary-review-packet) — proceso (active)
 - [Propietario](entries/owner.md#glossary-owner) — gobernanza (active)
 ### R
 
 - [Release](entries/release.md#glossary-release) — producto (active)
+- [Retrospectiva](entries/retrospective.md#glossary-retrospective) — proceso (active)
 - [Revisión](entries/review.md#glossary-review) — proceso (active)
 - [Rollout](entries/rollout.md#glossary-rollout) — operación (active)
 ### S
@@ -50,8 +52,10 @@ Registro canónico: [`terms.yaml`](terms.yaml). Las anclas HTML son estables.
 | [Gate](entries/gate.md#glossary-gate) | gobernanza | active |
 | [Kanban](entries/kanban.md#glossary-kanban) | operación | active |
 | [Migración](entries/migration.md#glossary-migration) | proceso | active |
+| [Paquete de revisión](entries/review-packet.md#glossary-review-packet) | proceso | active |
 | [Propietario](entries/owner.md#glossary-owner) | gobernanza | active |
 | [Release](entries/release.md#glossary-release) | producto | active |
+| [Retrospectiva](entries/retrospective.md#glossary-retrospective) | proceso | active |
 | [Revisión](entries/review.md#glossary-review) | proceso | active |
 | [Rollout](entries/rollout.md#glossary-rollout) | operación | active |
 | [Skill](entries/skill.md#glossary-skill) | técnico | active |
