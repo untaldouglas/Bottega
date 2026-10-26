@@ -9,6 +9,7 @@ source_documents:
   - BOTTEGA-2-AUTONOMY-POLICY.yaml
   - BOTTEGA-2-SOLUTION-ROADMAP.md
   - BOTTEGA-2-UX-SERVICE-DESIGN.md
+  - BOTTEGA-2-FRAPPE-PATCH-POLICY.md
   - ../architecture/BOTTEGA-2-BOUNDARIES.md
 requirements_to_acceptance:
   RF-001_004: [CA-001, CA-003, CA-018]
@@ -20,6 +21,7 @@ requirements_to_acceptance:
   RF-020: [CA-018, CA-019]
   RNF-001_005: [CA-004, CA-005, CA-010, CA-017, CA-019]
   RNF-006_012: [CA-012, CA-013, CA-014, CA-015, CA-018, CA-020]
+  RF-021: [CA-021]
 artifacts:
   - id: product-brief
     path: BOTTEGA-2-PRODUCT-BRIEF.yaml
@@ -41,6 +43,9 @@ artifacts:
     status: materialized
   - id: architecture-boundaries
     path: ../architecture/BOTTEGA-2-BOUNDARIES.md
+    status: materialized
+  - id: frappe-patch-policy
+    path: BOTTEGA-2-FRAPPE-PATCH-POLICY.md
     status: materialized
 provider_record:
   effective_provider: openai-codex

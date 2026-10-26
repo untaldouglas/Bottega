@@ -22,7 +22,7 @@ Hechos que el diseño debe preservar:
 2. La autonomía es gobernada; no acepta humanamente, hace release, publica ni opera en producción por autoridad propia.
 3. `PRODUCT_PASS`, `RELEASE_READY_CONDITIONAL` y `PUBLICATION_AUTHORIZED` son estados de decisión distintos.
 4. Producto 02, datos institucionales, secretos, producción y cambios de GitHub quedan fuera de este alcance.
-5. Frappe v16 es Golden Path para productos nuevos; `v16.53.0` es baseline candidato, no `latest` ni baseline aprobado.
+5. Frappe v16 es Golden Path para productos nuevos; `v16.53.0` es baseline candidato, no `latest` ni baseline aprobado. Toda promoción requiere la política de patch calificado, incluida tupla completa, procedencia, SBOM y recuperación probada.
 6. La revisión del implementador por sí mismo no es independiente.
 7. Primer HTTP 429: abre circuito y detiene el intento; fallback sólo con `fallback_allowed: true` y proveedor/capacidad declarados.
 8. Manifiestos y eventos históricos son append-only; una corrección crea un nuevo intento.
@@ -124,6 +124,8 @@ Registro mínimo de una validación futura:
 - estado `candidate`, `validated` o `rejected`.
 
 `v16.53.0` y `v5.31.1` son baseline candidatos declarados por el contrato; la fecha y compatibilidad deben verificarse en I3. No se ejecutó instalación en este Incremento 0, por lo que no se afirma compatibilidad. La etiqueta `latest` nunca satisface el registro.
+
+La selección y promoción de patches se rige por `../product/BOTTEGA-2-FRAPPE-PATCH-POLICY.md`: fuentes oficiales, compatibilidad de toda la tupla, licencias, advisories, SBOM, procedencia, aceptación humana, backup/restore/rollback y comparación con el candidato anterior. Este límite evita que el adaptador convierta una etiqueta o imagen mutable en baseline.
 
 ### 3.2 Adaptador de proveedor/modelo
 

@@ -210,6 +210,8 @@ RF-019 — Separación de Producto 02. El sistema deberá rechazar o bloquear ac
 
 RF-020 — Revisión independiente. El expediente no podrá cerrarse como producto terminado sin una revisión independiente y un resultado PASS; PASS no autoriza publicación.
 
+RF-021 — Patch calificado. El perfil Frappe v16 deberá seleccionar desde fuentes oficiales una tupla completa reproducible, evaluar licencias, advisories, SBOM y procedencia, y exigir aceptación, backup, restore, rollback y comparación contra patches posteriores; `v16.53.0` permanecerá candidato hasta validar todo el contrato.
+
 ## 9. Requisitos no funcionales
 
 RNF-001 — Trazabilidad completa. El 100% de los requisitos requeridos en una iniciativa deberá tener criterio, prueba planeada, owner y referencia de evidencia antes del gate correspondiente.
@@ -294,6 +296,8 @@ CA-019 — Revisión independiente. El paquete contiene Summary, Evidence y Merg
 
 CA-020 — No autorización implícita. PR abierto, CI verde, `PRODUCT_PASS` o revisión PASS no se presentan como autorización de publicación. Método: inspección de estados y mensajes.
 
+CA-021 — Patch calificado. Dado un candidato Frappe, la política registra fuentes oficiales, línea mayor, patch, tag, commit, dependencias, licencias, advisories, SBOM, procedencia, aceptación humana, backup/restore/rollback y comparación posterior; falta de cualquier elemento bloquea y `latest` no pasa. Método: check determinista documental más revisión del expediente de validación.
+
 ## 12. Métricas candidatas
 
 No son objetivos aprobados todavía. Cada métrica requiere baseline y owner antes de usarse para ADOPTAR/ADAPTAR/DETENER.
@@ -333,6 +337,7 @@ R-008. Revisión insuficientemente independiente. Mitigación: owner distinto, i
 R-009. Reanudación que duplica efectos. Mitigación: manifiestos inmutables, idempotencia observable y CA-010/017.
 
 R-010. Cambios de gobernanza autoaplicados por retrospectiva. Mitigación: backlog separado y aprobación humana.
+R-011. Patch Frappe no reproducible o actualización sin recuperación probada. Mitigación: política de patch calificado, tupla completa, procedencia, SBOM, backup/restore/rollback y comparación posterior.
 
 ## 14. Decisiones protegidas
 
@@ -351,6 +356,8 @@ D-006. Producto 02 permanece en stand by. Responsable: Douglas. No se modifica n
 D-007. Datos reales e integraciones institucionales fuera de alcance. Responsable: Douglas.
 
 D-008. Retrospectiva propone y no autoaplica. Responsable: persona autorizada; aprobación final de Douglas.
+
+D-009. Un patch Frappe sólo puede promocionarse mediante la política de patch calificado; `v16.53.0` es candidato hasta validación completa. Responsable: Douglas.
 
 ## 15. Roadmap condicionado
 
@@ -394,6 +401,7 @@ Decisión del gate: NO DETERMINABLE hasta completar la revisión independiente y
 | Autoridad humana separada | RF-008–010, RNF-003, RNF-009 | CA-007, CA-008, CA-020 |
 | Autonomía reanudable y segura | RF-010–015, RF-017–018 | CA-009–012, CA-016–017 |
 | Core neutral y Golden Path | RF-016–017, RNF-007 | CA-013–014 |
+| Patch Frappe reproducible y recuperable | RF-021, RNF-002–006, RNF-012 | CA-021 |
 | Producto 02 en stand by | RF-019 | CA-015 |
 | Revisión y cierre independientes | RF-020, RNF-004–006 | CA-018–019 |
 | Métricas con evidencia | RNF-001–005 | M-001–M-009; CA-005, CA-010 |

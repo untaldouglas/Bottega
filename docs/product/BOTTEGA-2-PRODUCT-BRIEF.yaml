@@ -19,6 +19,7 @@ scope:
     - modos Advisor, Taller y Auditor
     - gates, estados y trazabilidad
     - politica de autonomia gobernada
+    - politica verificable de patch calificado para Frappe v16
     - roadmap condicionado
   excluded:
     - implementacion de runtime
@@ -64,3 +65,4 @@ references:
   product_contract: "https://github.com/untaldouglas/Bottega/issues/3"
   governance: "https://github.com/untaldouglas/Bottega/issues/4"
   source_artifact: BOTTEGA-2-REQUIREMENTS.md
+  frappe_patch_policy: BOTTEGA-2-FRAPPE-PATCH-POLICY.md
