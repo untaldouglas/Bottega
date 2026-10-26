@@ -1,0 +1,63 @@
+schema_version: "1.0"
+product: Bottega 2.0
+increment: I0
+status: CANDIDATE_NOT_BASELINED
+owner: Douglas
+measurement_rule: No percentage or adoption claim is valid without a baseline, owner, denominator, and reproducible evidence.
+metrics:
+  - id: M-001
+    name: tasa_de_trazabilidad_completa
+    numerator: requisitos con criterio, prueba y evidencia valida
+    denominator: requisitos requeridos del run
+    source: manifiesto y auditoria
+    status: candidata
+  - id: M-002
+    name: gates_sin_retrabajo_posterior
+    numerator: gates sin NEEDS_WORK por defecto evitable
+    denominator: gates cerrados
+    source: historial de gates
+    status: candidata
+  - id: M-003
+    name: tiempo_de_ciclo
+    numerator: horas desde brief aprobado hasta PRODUCT_PASS
+    denominator: runs cerrados con PRODUCT_PASS
+    source: timestamps del expediente
+    status: candidata
+  - id: M-004
+    name: retrabajo
+    numerator: intentos de correccion posteriores al primer resultado
+    denominator: runs cerrados
+    source: delivery_attempt y validation_attempt
+    status: candidata
+  - id: M-005
+    name: bloqueos_correctamente_contenidos
+    numerator: acciones prohibidas detenidas sin efecto
+    denominator: acciones prohibidas simuladas
+    source: auditoria de politicas
+    status: candidata
+  - id: M-006
+    name: integridad_de_evidencia
+    numerator: manifiestos con hash valido
+    denominator: manifiestos revisados
+    source: gate check
+    status: candidata
+  - id: M-007
+    name: reanudacion_sin_duplicado
+    numerator: runs reanudados sin efectos duplicados
+    denominator: runs interrumpidos y reanudados
+    source: manifiestos y auditoria
+    status: candidata
+  - id: M-008
+    name: costo_por_producto
+    numerator: costo total del run
+    denominator: productos con PRODUCT_PASS
+    source: registros autorizados de costo
+    status: NO_DETERMINABLE_en_I0
+  - id: M-009
+    name: uso_correcto_de_frappe_golden_path
+    numerator: productos nuevos que validan baseline candidato
+    denominator: productos nuevos que declaran Frappe
+    source: registro de producto
+    status: candidata_sin_piloto
+baseline: NO_DETERMINABLE
+adoption_decision: NO_DETERMINABLE

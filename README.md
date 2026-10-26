@@ -46,6 +46,20 @@ Cada etapa termina en un gate que solo una persona autoriza. La implementación 
 - `scripts/` y `Makefile` — controles de documentación, CI, doctor y bootstrap.
 - `comunicacion/` — documentación mercadológica.
 - `app01/` — ejemplo probado (Idea Prioritizer).
+- `docs/product/` — contrato y paquete documental de Bottega 2.0.
+- `docs/architecture/` — límites, seguridad y estrategia de pruebas de Bottega 2.0.
+- `docs/adr/` — decisiones arquitectónicas propuestas, pendientes de aprobación humana.
+
+## Bottega 2.0 — Incremento 0
+
+El paquete `docs/product/BOTTEGA-2-*` materializa el contrato de producto, requisitos,
+métricas, política de autonomía, trazabilidad, roadmap y diseño UX. Su estado es
+`NEEDS_WORK`: requiere revisión independiente y decisión de Douglas. No implementa
+runtime, no instala Frappe, no toca Producto 02 y no autoriza release, publicación,
+producción ni merge.
+
+El proveedor/modelo efectivo de esta materialización está registrado sin secretos en
+`BOTTEGA-2-TRACEABILITY.yaml`: `openai-codex / gpt-5.6-luna`.
 
 ## app01 — ejemplo probado
 

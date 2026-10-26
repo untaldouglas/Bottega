@@ -1,0 +1,47 @@
+schema_version: "1.0"
+product: Bottega 2.0
+increment: I0
+status: NEEDS_WORK
+policy_id: autonomy-i0-v1
+principle: fail_closed
+human_authority:
+  required_for:
+    - accept_product
+    - authorize_release
+    - authorize_publication
+    - execute_production
+    - change_scope_or_governance
+  implicit_signals_not_authorizations:
+    - technical_pass
+    - ci_green
+    - open_pull_request
+    - conversational_confirmation
+    - PRODUCT_PASS
+modes:
+  advisor:
+    allowed: prepare_questions_alternatives_requirements
+    forbidden: irreversible_mutations
+  taller:
+    allowed: execute_declared_stages_in_authorized_sandbox
+    forbidden: bypass_gate_or_expand_scope
+  auditor:
+    allowed: inspect_snapshot_and_issue_verdict
+    forbidden: mutate_history_or_authorize_publication
+provider_policy:
+  first_http_429: open_circuit_and_stop_attempt
+  fallback: only_if_declared_and_authorized
+  effective_provider_must_be_recorded: true
+  secrets_in_logs: forbidden
+retry_counters:
+  - delivery_attempt
+  - provider_retry
+  - validation_attempt
+  - operational_cleanup
+blocking_conditions:
+  - missing_or_ambiguous_authorization
+  - missing_scope_or_data_classification
+  - missing_dependency_or_evidence
+  - hash_mismatch
+  - expired_or_revoked_authorization
+  - Producto_02_or_production_request
+  - implementer_equals_reviewer
