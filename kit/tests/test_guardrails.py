@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 LIB=ROOT/'lib'; sys.path.insert(0,str(LIB))
 from guardrails import validate_gate, validate_traceability, validate_navigation, sha256_payload
+from smoke_runtime import canonical_step_path
 
 SHA='0'*40
 class GuardrailTests(unittest.TestCase):
@@ -18,6 +19,13 @@ class GuardrailTests(unittest.TestCase):
  def test_navigation_egress(self):
   x={'schema_version':'guardrails/v1','allowed_hosts':['127.0.0.1'],'allowed_statuses':[200],'observations':[{'host':'evil.test','status':200}]}
   self.assertIn('NAV003',[i['code'] for i in validate_navigation(x)['issues']])
+ def test_navigation_goto_requires_safe_declared_path(self):
+  base='http://127.0.0.1:4173'
+  hosts={'127.0.0.1'}; allow={'/app/portal-de-solicitudes'}
+  self.assertEqual(canonical_step_path(base,'/app/portal-de-solicitudes',hosts,allow),base+'/app/portal-de-solicitudes')
+  for unsafe in ('https://evil.test/app', '/app/../etc', '/app/portal-de-solicitudes?token=secret'):
+   with self.subTest(unsafe=unsafe):
+    with self.assertRaises(ValueError): canonical_step_path(base,unsafe,hosts,allow)
  def test_deterministic_hash(self): self.assertEqual(sha256_payload({'b':1,'a':2}),sha256_payload({'a':2,'b':1}))
  def test_cli_negative(self):
   with tempfile.TemporaryDirectory() as d:

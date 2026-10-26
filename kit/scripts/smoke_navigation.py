@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from guardrails import validate_navigation
-from smoke_runtime import RuntimeBlocked, load_json, output, reject_unsafe_contract, safe_text, issue, allowed_url
+from smoke_runtime import RuntimeBlocked, load_json, output, reject_unsafe_contract, safe_text, issue, allowed_url, canonical_step_path
 
 
 def main() -> int:
@@ -27,6 +27,7 @@ def main() -> int:
         if scenario.get("diagnostic_routes_are_not_canonical") and scenario.get("canonical_start") in scenario.get("diagnostic_routes", []): errors.append(issue("NAV001", "diagnostic route cannot be canonical"))
         base = str(adapter.get("base_url", scenario.get("base_url", "")))
         hosts = set(scenario.get("allowed_hosts", adapter.get("allowed_hosts", [])))
+        path_allowlist = set(adapter.get("allowed_navigation_paths", scenario.get("allowed_navigation_paths", [])))
         if not base or not hosts: errors.append(issue("NAV000", "base_url and allowed_hosts are required"))
         if not errors:
             try:
@@ -95,10 +96,19 @@ def main() -> int:
                         response = page.goto(start, wait_until="networkidle", timeout=int(adapter.get("timeout_ms", 10000)))
                         if response is None or response.status not in set(scenario.get("allowed_statuses", [])): errors.append(issue("NAV002", "canonical start status not allowlisted"))
                         for step in adapter.get("canonical_steps", []):
-                            if not isinstance(step, dict) or step.get("action") != "click" or not isinstance(step.get("selector"), str) or not step["selector"].startswith(("#", ".", "[")):
-                                errors.append(issue("NAV004", "only declared CSS click selectors are allowed", "canonical_steps")); continue
-                            page.locator(step["selector"]).click(timeout=3000)
-                            page.wait_for_load_state("networkidle")
+                            if not isinstance(step, dict):
+                                errors.append(issue("NAV004", "only declarative navigation steps are allowed", "canonical_steps")); continue
+                            if step.get("action") == "goto":
+                                try:
+                                    target = canonical_step_path(base, step.get("path"), hosts, path_allowlist)
+                                except ValueError as exc:
+                                    errors.append(issue("NAV004", str(exc), "canonical_steps")); continue
+                                page.goto(target, wait_until="networkidle", timeout=int(adapter.get("timeout_ms", 10000)))
+                            elif step.get("action") == "click" and isinstance(step.get("selector"), str) and step["selector"].startswith(("#", ".", "[")):
+                                page.locator(step["selector"]).click(timeout=3000)
+                            else:
+                                errors.append(issue("NAV004", "only declarative goto paths and CSS click selectors are allowed", "canonical_steps")); continue
+                            page.wait_for_load_state('networkidle')
                         current_host = page.url.split("/", 3)[2].split(":", 1)[0]
                         if current_host not in hosts: errors.append(issue("NAV003", "final host not allowlisted"))
                         observations.append({"kind": "final", "status": response.status if response else None, "path": page.url.split(current_host, 1)[-1][:240]})

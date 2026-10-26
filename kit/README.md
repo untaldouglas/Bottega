@@ -26,7 +26,7 @@ python3 scripts/smoke_navigation.py --adapter adapters/example.json \
   --scenario navigation-smoke.json --read-only --format json
 ```
 
-El smoke autenticado verifica identidad server-side, acceso propio, rechazo de acceso cruzado y una sonda de mutación prohibida con `before == after`. El smoke de navegación inicia en `/login`, registra requests/redirects saneados y sólo permite hosts/statuses declarados. Si no existe el runtime Playwright/Chromium, el resultado correcto es `BLOCKED` (código 3), nunca `PASS`. Los resultados ejecutados viven en `evidence/<run-id>/`; los criterios no ejecutados permanecen planificados en `TEST-SEAMS.yaml`.
+El smoke autenticado verifica identidad server-side, acceso propio, rechazo de acceso cruzado y una sonda de mutación prohibida con `before == after`. El smoke de navegación inicia en `/login`, registra requests/redirects saneados y sólo permite hosts/statuses declarados. `canonical_steps` admite únicamente `{"action":"goto","path":"/..."}` (ruta local incluida en `allowed_navigation_paths`) y `{"action":"click","selector":"#..."}`/CSS equivalente. Se rechazan URLs absolutas, hosts externos, traversal, fragmentos, queries sensibles y rutas fuera de allowlist; no se ejecutan comandos, JavaScript ni shell. Si no existe el runtime Playwright/Chromium, el resultado correcto es `BLOCKED` (código 3), nunca `PASS`. Los resultados ejecutados viven en `evidence/<run-id>/`; los criterios no ejecutados permanecen planificados en `TEST-SEAMS.yaml`.
 
 ## Flujo
 

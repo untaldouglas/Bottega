@@ -41,11 +41,24 @@ def reject_unsafe_contract(value: Any, path: str = "$", *, allow_secret_names=Fa
 def allowed_url(base_url: str, path: str, hosts: set[str]) -> str:
     if not isinstance(path, str) or not path.startswith("/") or ".." in Path(urllib.parse.urlsplit(path).path).parts:
         raise ValueError("PATH001: safe absolute relative path required")
+    source = urllib.parse.urlsplit(path)
+    if source.scheme or source.netloc or source.fragment:
+        raise ValueError("PATH001: absolute URL, host, or fragment is forbidden")
+    if any(_SECRET.search(key) for key in urllib.parse.parse_qs(source.query, keep_blank_values=True)):
+        raise ValueError("SECURITY002: sensitive query parameter is forbidden")
     url = urllib.parse.urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
     parsed = urllib.parse.urlsplit(url)
     if parsed.scheme not in {"http", "https"} or parsed.hostname not in hosts:
         raise ValueError("NAV003: host is not allowlisted")
     return url
+
+def canonical_step_path(base_url: str, path: Any, hosts: set[str], allowlist: set[str]) -> str:
+    if not isinstance(path, str):
+        raise ValueError("PATH001: goto path must be a string")
+    parsed = urllib.parse.urlsplit(path)
+    if parsed.path not in allowlist:
+        raise ValueError("PATH001: goto path is outside the declared allowlist")
+    return allowed_url(base_url, path, hosts)
 
 def env_headers(adapter: dict[str, Any]) -> dict[str, str]:
     headers: dict[str, str] = {}
