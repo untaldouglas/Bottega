@@ -1,6 +1,6 @@
 # ADR-0002: Eventos y evidencia append-only
 
-- Estado: PROPUESTA PARA REVISIÓN; no aprobada en I0
+- Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO; no autoriza implementación
 - Fecha: 2026-10-26
 - Decisor: Douglas
 - Alcance: expediente, eventos y evidencia de Bottega 2.0

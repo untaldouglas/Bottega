@@ -1,6 +1,6 @@
 # Bottega 2.0 — Product Brief y requisitos verificables
 
-Estado: propuesta para GATE 1; no autoriza diseño, implementación, PoC, release ni publicación.
+Estado: APPROVED_GATE_0 para el contrato de I0; no autoriza diseño de I1, implementación, PoC, release, publicación ni producción.
 Fecha de elaboración: 2026-10-26 (CST, UTC-06:00).
 Propietario de la decisión final: Douglas.
 

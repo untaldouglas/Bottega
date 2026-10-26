@@ -1,6 +1,6 @@
 # ADR-0005: Política de patch calificado para Frappe v16
 
-- Estado: PROPUESTA PARA REVISIÓN; no aprobada en I0
+- Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO; no autoriza instalación ni implementación
 - Fecha: 2026-10-26
 - Decisor: Douglas
 - Alcance: perfil Golden Path Frappe v16; no Producto 02

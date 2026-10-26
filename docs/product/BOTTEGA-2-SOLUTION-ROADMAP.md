@@ -1,6 +1,6 @@
 # Bottega 2.0 — Solución y roadmap por incrementos
 
-Estado: propuesta para GATE 2; no autoriza implementación, PoC, instalación de Frappe, release, publicación, producción ni cambios en GitHub.
+Estado: Gate 0 de I0 APPROVED; el roadmap permanece condicionado a sus gates y no autoriza implementación, PoC, instalación de Frappe, release, publicación, producción ni cambios en GitHub.
 Fecha: 2026-10-26 (CST, UTC-06:00).
 Propietario de decisión: Douglas.
 
@@ -249,7 +249,7 @@ Riesgos principales y respuesta:
 
 ## 11. Criterios de gate y decisión
 
-GATE 1 / cierre de I0: hechos, supuestos, preguntas y decisiones separados; alternativa C recomendada y D como fallback; contratos de modos completos; RF/RNF/CA trazables; core neutral y Frappe separado; límites y no-sobrediseño explícitos; revisión independiente y aprobación de Douglas. Si falta cualquiera: NEEDS_WORK o BLOCKED, no autorización de I1.
+- GATE 1 / siguiente revisión de I0: hechos, supuestos, preguntas y decisiones separados; alternativa C recomendada y D como fallback; contratos de modos completos; RF/RNF/CA trazables; core neutral y Frappe separado; límites y no-sobrediseño explícitos. Gate 0 ya está aprobado; esta revisión y cualquier autorización de I1 siguen requiriendo una decisión separada.
 
 GATE 2 / Advisor: CA-001, CA-003, CA-012 y trazabilidad pasan con fixtures sintéticas; los NO DETERMINABLE se conservan; no hay ejecución irreversible ni secretos. PASS técnico sólo habilita revisión del siguiente gate.
 

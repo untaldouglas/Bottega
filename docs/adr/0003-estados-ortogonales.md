@@ -1,6 +1,6 @@
 # ADR-0003: Estados técnicos y decisiones humanas ortogonales
 
-- Estado: PROPUESTA PARA REVISIÓN; no aprobada en I0
+- Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO; no autoriza implementación
 - Fecha: 2026-10-26
 - Decisor: Douglas
 - Alcance: estados y autorización

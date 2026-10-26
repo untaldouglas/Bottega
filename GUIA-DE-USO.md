@@ -14,8 +14,8 @@ Bottega es un grupo de seis Bots nuevos y especializados que convierten una nece
 ## Contrato Bottega 2.0
 
 El paquete del Incremento 0 está en `docs/product/`, con límites y seguridad en
-`docs/architecture/` y propuestas ADR en `docs/adr/`. Es documentación para revisión:
-su estado es `NEEDS_WORK` hasta revisión independiente y decisión humana de Douglas.
+`docs/architecture/` y dirección contractual en `docs/adr/`. Gate 0 fue aprobado
+por Douglas; la decisión está registrada en `docs/product/BOTTEGA-2-DECISION-RECORD.yaml`.
 No autoriza implementación, instalación de Frappe, piloto, release, publicación,
 producción ni merge. Los modos Advisor, Taller y Auditor, y los estados
 `PRODUCT_PASS`, `RELEASE_READY_CONDITIONAL` y `PUBLICATION_AUTHORIZED`, son distintos.

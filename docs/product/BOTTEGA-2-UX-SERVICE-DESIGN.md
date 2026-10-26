@@ -1,12 +1,12 @@
 # Bottega 2.0 — Diseño de servicio UX: Advisor, Taller y Auditor
 
-Estado: PROPUESTA PARA REVISIÓN INDEPENDIENTE
-Decisión UX: NEEDS_WORK hasta completar revisión independiente y decisión humana de Douglas.
+Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO DE I0
+Decisión UX: aceptada dentro del Gate 0; no es aprobación de UX Gate ni autorización de I1.
 Fecha: 2026-10-26 (CST, UTC-06:00)
 Propietario de diseño: Donatello (UX)
 Alcance: Incremento 0; diseño de servicio y experiencia, sin implementación, prototipo funcional, instalación, datos reales, producción ni cambios en GitHub.
 
-Este documento no es aprobación de UX Gate ni autorización de I1. Define una experiencia observable para que una revisión independiente pueda comprobarla.
+Este documento no es aprobación de UX Gate ni autorización de I1. Define una experiencia observable aceptada como dirección contractual para que la revisión posterior pueda comprobarla.
 
 ## 1. Entradas, hechos y límites
 

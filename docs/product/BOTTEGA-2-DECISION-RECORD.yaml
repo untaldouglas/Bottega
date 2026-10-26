@@ -1,0 +1,47 @@
+schema_version: "1.0"
+record_id: I0-GATE-0-2026-10-26
+product: Bottega 2.0
+increment: I0
+decision: APPROVED
+approved_at: "2026-10-26T13:14:22-06:00"
+decider: Douglas
+question: "¿Aprueba el Gate 0 del Incremento 0 de Bottega 2.0?"
+answer: "sí"
+source_evidence:
+  issue: "https://github.com/untaldouglas/Bottega/issues/1"
+  pull_request: "https://github.com/untaldouglas/Bottega/pull/6"
+  reviewed_sha: bf81e556670dac5c62545454c27bcaee22e33bad
+  independent_review: PASS
+approved_scope:
+  - contrato de producto de Bottega 2.0
+  - modos Advisor, Taller y Auditor
+  - core neutral de plataforma
+  - autonomía gobernada y decisiones protegidas
+  - Frappe v16 como Golden Path
+  - v16.53.0 como baseline candidato sujeto a validación
+  - métricas candidatas y trazabilidad
+  - cierre documental del Incremento 0
+status_transitions:
+  package: APPROVED_GATE_0
+  technical_adrs: ACCEPTED_AS_CONTRACT_DIRECTION
+  metrics: CANDIDATE_NOT_BASELINED
+  baseline: NO_DETERMINABLE
+  adoption_decision: NO_DETERMINABLE
+not_authorized:
+  - "merge de PR #5 o PR #6"
+  - implementación del Advisor o inicio de I1
+  - instalación o PoC de Frappe
+  - release
+  - publicación
+  - producción
+  - datos reales o institucionales
+  - cambios en Producto 02
+follow_up:
+  - cualquier merge requiere decisión separada
+  - cualquier inicio del Incremento 1 requiere decisión separada
+  - validar Frappe y su baseline sólo en el gate correspondiente
+provider_record:
+  effective_provider: openai-codex
+  effective_model: gpt-5.6-luna
+  purpose: decision_record_documental
+  secrets_included: false

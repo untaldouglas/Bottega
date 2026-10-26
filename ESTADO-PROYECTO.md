@@ -15,10 +15,11 @@ Bottega es un método gobernado de desarrollo de software asistido por IA: seis 
 - **Contrato TDD negativo** — `kit/templates/TEST-SEAMS.yaml`: cada seam declara qué detecta y qué no; sin `misses` no hay evidencia de GATE 4.
 - **Diagrama de skills** — `docs/diagrama-skills-matt-pocock.md` (mapa de skills de Matt Pocock por rol).
 - **Plugin Matt Pocock** — actualizado a `5beb35b` (v1.3.1), respaldado y con rollback disponible.
-- **Bottega 2.0 — Incremento 0** — paquete documental materializado en `docs/product/`,
-  `docs/architecture/` y `docs/adr/`; permanece `NEEDS_WORK` hasta revisión independiente
-  y decisión humana. No autoriza implementación, Frappe, piloto, release, publicación,
-  producción ni cambios en Producto 02.
+- **Bottega 2.0 — Incremento 0** — Gate 0 aprobado por Douglas el 2026-10-26;
+  la decisión está materializada en `docs/product/BOTTEGA-2-DECISION-RECORD.yaml`.
+  El contrato y los ADR técnicos quedan aceptados como dirección del contrato, sin
+  autorizar implementación, Frappe, piloto, release, publicación, producción, merge
+  ni cambios en Producto 02.
 
 ## Backlog diferido (con justificación)
 
@@ -35,13 +36,15 @@ Bottega es un método gobernado de desarrollo de software asistido por IA: seis 
 
 ## Decisiones abiertas
 
-- Bottega 2.0 conserva P1–P7 como `NO DETERMINABLE` y los ADR-0001–0004 como propuestas
-  pendientes de revisión; no se inventan baseline, límites ni proveedor definitivo.
+- Bottega 2.0 conserva P1–P7 como `NO DETERMINABLE`, las métricas como candidatas sin
+  baseline y `v16.53.0` como baseline candidato; no se inventan límites ni proveedor
+  definitivo.
 - La próxima iniciativa (PRODUCTO-002) debe pasar por el piloto comparativo (Caso A / Caso B)
   documentado en el paquete `bottega-di-douglas`, no generalizar desde PRODUCTO-001.
 
 ## Siguiente acción recomendada
 
-Completar la revisión independiente y la decisión de Douglas sobre el Incremento 0; después,
-si se aprueba, definir I1 como una vertical Advisor pequeña antes del piloto comparativo de
-PRODUCTO-002. Toda decisión ADOPTAR / ADAPTAR / DETENER requiere baseline y evidencia.
+Definir, con decisión separada, si se inicia I1 como una vertical Advisor pequeña antes
+del piloto comparativo de PRODUCTO-002. Toda decisión de merge, implementación, Frappe,
+release, publicación, producción o ADOPTAR / ADAPTAR / DETENER requiere autorización y
+evidencia propias; toda decisión de medición requiere baseline.

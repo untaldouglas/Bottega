@@ -1,6 +1,6 @@
 # ADR-0001: Core neutral y puertos/adaptadores
 
-- Estado: PROPUESTA PARA REVISIÓN; no aprobada en I0
+- Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO; no autoriza implementación
 - Fecha: 2026-10-26
 - Decisor: Douglas
 - Alcance: Bottega 2.0

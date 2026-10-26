@@ -1,7 +1,7 @@
 schema_version: "1.0"
 product: Bottega 2.0
 increment: I0
-status: NEEDS_WORK
+status: APPROVED_GATE_0
 source_documents:
   - BOTTEGA-2-PRODUCT-BRIEF.yaml
   - BOTTEGA-2-REQUIREMENTS.md
@@ -10,6 +10,7 @@ source_documents:
   - BOTTEGA-2-SOLUTION-ROADMAP.md
   - BOTTEGA-2-UX-SERVICE-DESIGN.md
   - BOTTEGA-2-FRAPPE-PATCH-POLICY.md
+  - BOTTEGA-2-DECISION-RECORD.yaml
   - ../architecture/BOTTEGA-2-BOUNDARIES.md
 requirements_to_acceptance:
   RF-001_004: [CA-001, CA-003, CA-018]
@@ -47,6 +48,9 @@ artifacts:
   - id: frappe-patch-policy
     path: BOTTEGA-2-FRAPPE-PATCH-POLICY.md
     status: materialized
+  - id: gate-0-decision-record
+    path: BOTTEGA-2-DECISION-RECORD.yaml
+    status: approved_gate_0
 provider_record:
   effective_provider: openai-codex
   effective_model: gpt-5.6-luna

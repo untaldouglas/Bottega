@@ -1,6 +1,6 @@
 # ADR-0004: Circuit breaker y registro de proveedor efectivo
 
-- Estado: PROPUESTA PARA REVISIÓN; no aprobada en I0
+- Estado: ACEPTADO COMO DIRECCIÓN DEL CONTRATO; no autoriza implementación
 - Fecha: 2026-10-26
 - Decisor: Douglas
 - Alcance: ejecución futura de proveedores/modelos

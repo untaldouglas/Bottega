@@ -1,7 +1,7 @@
 schema_version: "1.0"
 product: Bottega 2.0
 increment: I0
-status: NEEDS_WORK
+status: APPROVED_GATE_0
 owner: Douglas
 decision_authority: Douglas
 provider:
@@ -21,6 +21,7 @@ scope:
     - politica de autonomia gobernada
     - politica verificable de patch calificado para Frappe v16
     - roadmap condicionado
+    - decision record machine-readable de Gate 0
   excluded:
     - implementacion de runtime
     - instalacion o validacion de Frappe
