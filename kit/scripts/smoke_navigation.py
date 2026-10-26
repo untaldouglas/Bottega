@@ -1,15 +1,79 @@
 #!/usr/bin/env python3
-"""Validate navigation smoke policy without opening a browser."""
+"""Execute a canonical navigation smoke with an existing Playwright runtime."""
 from __future__ import annotations
-import argparse,json,sys
+import argparse, json, sys
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'lib'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from guardrails import validate_navigation
+from smoke_runtime import RuntimeBlocked, load_json, output, reject_unsafe_contract, safe_text, issue, allowed_url
 
-def main():
- p=argparse.ArgumentParser(); p.add_argument('--adapter',type=Path,required=True); p.add_argument('--scenario',type=Path,required=True); p.add_argument('--format',choices=['json','text'],default='json'); p.add_argument('--read-only',action='store_true'); a=p.parse_args()
- try: data=json.loads(a.scenario.read_text())
- except (OSError,json.JSONDecodeError) as e: data={'schema_version':'bad','error':type(e).__name__}
- out=validate_navigation(data); out['mode']='read-only'; out['note']='browser execution is adapter opt-in'
- print('NAVIGATION_'+out['verdict'] if a.format=='text' else json.dumps(out,ensure_ascii=False,sort_keys=True,separators=(',',':'))); return out['exit_code']
-if __name__=='__main__': sys.exit(main())
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--adapter", type=Path, required=True)
+    parser.add_argument("--scenario", type=Path, required=True)
+    parser.add_argument("--format", choices=("json", "text"), default="json")
+    parser.add_argument("--read-only", action="store_true")
+    args = parser.parse_args()
+    errors: list[dict[str, str]] = []
+    observations: list[dict] = []
+    try:
+        adapter, scenario = load_json(args.adapter), load_json(args.scenario)
+        errors.extend(reject_unsafe_contract(adapter, "adapter", allow_secret_names=True))
+        errors.extend(reject_unsafe_contract(scenario, "scenario"))
+        if adapter.get("schema_version") != "guardrails/v1" or scenario.get("schema_version") != "guardrails/v1": errors.append(issue("NAV000", "unsupported schema"))
+        if not args.read_only: errors.append(issue("NAV005", "--read-only is mandatory"))
+        if scenario.get("diagnostic_routes_are_not_canonical") and scenario.get("canonical_start") in scenario.get("diagnostic_routes", []): errors.append(issue("NAV001", "diagnostic route cannot be canonical"))
+        base = str(adapter.get("base_url", scenario.get("base_url", "")))
+        hosts = set(scenario.get("allowed_hosts", adapter.get("allowed_hosts", [])))
+        if not base or not hosts: errors.append(issue("NAV000", "base_url and allowed_hosts are required"))
+        if not errors:
+            try:
+                start = allowed_url(base, str(scenario.get("canonical_start", "/login")), hosts)
+            except ValueError as exc:
+                errors.append(issue("NAV003", str(exc)))
+                start = ""
+            if start:
+                try:
+                    from playwright.sync_api import sync_playwright
+                except ImportError:
+                    raise RuntimeBlocked("Playwright runtime is unavailable")
+                browser_path = adapter.get("chromium_executable")
+                with sync_playwright() as playwright:
+                    launch = {"headless": True}
+                    if browser_path:
+                        p = Path(str(browser_path)).expanduser().resolve()
+                        roots = [Path(x).expanduser().resolve() for x in adapter.get("allowed_binary_roots", [])]
+                        if not p.is_file() or not roots or not any(p == root or root in p.parents for root in roots):
+                            errors.append(issue("PREFLIGHT001", "unsafe browser executable"))
+                        else: launch["executable_path"] = str(p)
+                    if not errors:
+                        browser = playwright.chromium.launch(**launch)
+                        page = browser.new_page()
+                        def on_request(req):
+                            try: host = req.url.split("/", 3)[2].split(":", 1)[0]
+                            except IndexError: host = ""
+                            observations.append({"kind": "request", "host": host, "method": req.method, "path": req.url.split(host, 1)[-1][:240] if host else ""})
+                            if host not in hosts: errors.append(issue("NAV003", "external host denied", "requests"))
+                        page.on("request", on_request)
+                        response = page.goto(start, wait_until="networkidle", timeout=int(adapter.get("timeout_ms", 10000)))
+                        if response is None or response.status not in set(scenario.get("allowed_statuses", [])): errors.append(issue("NAV002", "canonical start status not allowlisted"))
+                        for step in adapter.get("canonical_steps", []):
+                            if not isinstance(step, dict) or step.get("action") != "click" or not isinstance(step.get("selector"), str) or not step["selector"].startswith(("#", ".", "[")):
+                                errors.append(issue("NAV004", "only declared CSS click selectors are allowed", "canonical_steps")); continue
+                            page.locator(step["selector"]).click(timeout=3000)
+                            page.wait_for_load_state("networkidle")
+                        current_host = page.url.split("/", 3)[2].split(":", 1)[0]
+                        if current_host not in hosts: errors.append(issue("NAV003", "final host not allowlisted"))
+                        observations.append({"kind": "final", "status": response.status if response else None, "path": page.url.split(current_host, 1)[-1][:240]})
+                        browser.close()
+    except RuntimeBlocked as exc:
+        report = {"schema_version": "guardrails/v1", "verdict": "BLOCKED", "exit_code": 3, "issues": [issue("NAV_RUNTIME", str(exc))], "mode": "read-only", "observations": observations}
+        output(report, args.format == "text"); return 3
+    except (ValueError, OSError, TimeoutError) as exc:
+        errors.append(issue("NAV000", str(exc)))
+    report = {"schema_version": "guardrails/v1", "verdict": "FAIL" if errors else "PASS", "exit_code": 1 if errors else 0, "issues": errors, "mode": "read-only", "observations": observations}
+    output(report, args.format == "text")
+    return report["exit_code"]
+
+if __name__ == "__main__": sys.exit(main())

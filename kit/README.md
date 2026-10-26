@@ -15,6 +15,19 @@ python3 scripts/gate_check.py --project ../mi-ejercicio --format markdown
 
 El scaffold crea los briefs, manifiestos, `REVIEW-PACKET.md`, `TEST-SEAMS.yaml` y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
 
+## Smokes read-only
+
+El adaptador es declarativo (`adapters/example.json`); no acepta comandos, shell, heredocs ni credenciales en JSON. Las credenciales, si el producto las necesita, se enlazan únicamente desde variables de entorno declaradas y se mantienen en memoria. El kit sólo ejecuta operaciones allowlistadas y sanea payloads antes de emitir evidencia.
+
+```bash
+python3 scripts/smoke_authenticated.py --adapter adapters/example.json \
+  --scenario authenticated-smoke.json --read-only --format json
+python3 scripts/smoke_navigation.py --adapter adapters/example.json \
+  --scenario navigation-smoke.json --read-only --format json
+```
+
+El smoke autenticado verifica identidad server-side, acceso propio, rechazo de acceso cruzado y una sonda de mutación prohibida con `before == after`. El smoke de navegación inicia en `/login`, registra requests/redirects saneados y sólo permite hosts/statuses declarados. Si no existe el runtime Playwright/Chromium, el resultado correcto es `BLOCKED` (código 3), nunca `PASS`. Los resultados ejecutados viven en `evidence/<run-id>/`; los criterios no ejecutados permanecen planificados en `TEST-SEAMS.yaml`.
+
 ## Flujo
 
 1. Completar `PROJECT-BRIEF.yaml` (alcance, datos sintéticos/permitidos, riesgos, gates y autorización).

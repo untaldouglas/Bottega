@@ -4,7 +4,10 @@ import hashlib, json, os, re
 from pathlib import Path
 from typing import Any
 
-SHA = re.compile(r"^[0-9a-f]{64}$")
+# Git object references are the canonical 40-hex form.  Do not accept
+# abbreviated refs; SHA-256 evidence hashes are validated separately by the
+# evidence producer.
+SHA = re.compile(r"^[0-9a-f]{40}$")
 SCHEMA = "guardrails/v1"
 
 def issue(code: str, path: str, value: Any, message: str, severity="error") -> dict[str, Any]:
@@ -42,7 +45,10 @@ def validate_gate(data: dict, evidence_root: Path | None = None) -> dict:
         if status in {"TECHNICAL_PASS","FIDELITY_PASS"} and grants & {"USER_ACCEPTANCE","RELEASE_READY","PRODUCTION_AUTHORIZED","PUBLICATION_PUBLIC_AUTHORIZED"}:
             errors.append(issue("GATE006",p+".authorization_granted",list(grants),"technical verdict cannot imply authorization"))
         if grants & limits: errors.append(issue("GATE009",p+".authorization_granted",list(grants & limits),"grant conflicts with prohibited limit"))
-        if r.get("fallback") not in (None,"none") and not isinstance(r.get("fallback"),dict): errors.append(issue("GATE011",p+".fallback",r.get("fallback"),"fallback must be explicit object"))
+        fallback = r.get("fallback")
+        if fallback not in (None, "none"):
+            if not isinstance(fallback, dict) or not all(fallback.get(k) for k in ("provider", "model", "reason", "activated_at")):
+                errors.append(issue("GATE011",p+".fallback",fallback,"fallback requires provider/model/reason/activated_at"))
         if r.get("ref_relation") is None and r.get("historical") is True: errors.append(issue("GATE004",p+".ref_relation",None,"historical relation required"))
         ev=r.get("evidence") or []
         if not ev: errors.append(issue("GATE016",p+".evidence",ev,"evidence required"))
@@ -58,10 +64,18 @@ def validate_gate(data: dict, evidence_root: Path | None = None) -> dict:
 def validate_traceability(data: dict, evidence_root: Path | None = None, observed_ref: str | None = None) -> dict:
     errors=[]; warnings=[]; _common(data, errors); reqs=data.get("requirements",[]) if isinstance(data,dict) else []
     ids=set(); covered=partial=uncovered=0
+    tests_seen: set[str] = set(); evidence_seen: set[str] = set()
     for i,r in enumerate(reqs):
         p=f"requirements[{i}]"; rid=r.get("requirement_id") if isinstance(r,dict) else None
         if rid in ids: errors.append(issue("TRACE004",p+".requirement_id",rid,"duplicate ID"))
         ids.add(rid); tests=r.get("tests",[]) if isinstance(r,dict) else []; ev=r.get("evidence",[]) if isinstance(r,dict) else []
+        for test in tests:
+            if test in tests_seen: errors.append(issue("TRACE004",p+".tests",test,"duplicate test ID"))
+            tests_seen.add(test)
+        for evidence in ev:
+            eid = evidence.get("id") if isinstance(evidence, dict) else evidence
+            if eid in evidence_seen: errors.append(issue("TRACE004",p+".evidence",eid,"duplicate evidence ID"))
+            evidence_seen.add(eid)
         if not tests: errors.append(issue("TRACE001",p+".tests",tests,"required test missing"))
         if not ev: errors.append(issue("TRACE002",p+".evidence",ev,"evidence missing"))
         if r.get("status") == "stale" or any(isinstance(e,dict) and observed_ref and e.get("evaluated_ref") != observed_ref for e in ev): warnings.append(issue("TRACE003",p,"historical","evidence is stale", "warning")); partial+=1
