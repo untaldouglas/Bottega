@@ -60,9 +60,9 @@ def canonical_step_path(base_url: str, path: Any, hosts: set[str], allowlist: se
         raise ValueError("PATH001: goto path is outside the declared allowlist")
     return allowed_url(base_url, path, hosts)
 
-def env_headers(adapter: dict[str, Any]) -> dict[str, str]:
+def env_headers(adapter: dict[str, Any], bindings: dict[str, str] | None = None) -> dict[str, str]:
     headers: dict[str, str] = {}
-    for name, env_name in (adapter.get("secret_bindings") or {}).items():
+    for name, env_name in (bindings if bindings is not None else adapter.get("secret_bindings") or {}).items():
         if not isinstance(name, str) or not isinstance(env_name, str) or not re.fullmatch(r"[A-Z_][A-Z0-9_]*", env_name):
             raise ValueError("invalid secret binding")
         value = os.environ.get(env_name)
@@ -70,14 +70,15 @@ def env_headers(adapter: dict[str, Any]) -> dict[str, str]:
         headers[name] = value
     return headers
 
-def request(adapter: dict[str, Any], operation: dict[str, Any], *, timeout: float = 10) -> dict[str, Any]:
+def request(adapter: dict[str, Any], operation: dict[str, Any], *, timeout: float = 10,
+            bindings: dict[str, str] | None = None) -> dict[str, Any]:
     url = allowed_url(str(adapter.get("base_url", "")), str(operation.get("path", "")), set(adapter.get("allowed_hosts", [])))
     method = str(operation.get("method", "GET")).upper()
     if method not in {"GET", "HEAD", "OPTIONS"}:
         if operation.get("kind") != "mutation_forbidden": raise ValueError("AUTH003: mutation not allowed")
     body = operation.get("body")
     if body is not None and method not in {"GET", "HEAD", "OPTIONS"}: raise ValueError("AUTH003: request body forbidden")
-    headers = {"Accept": "application/json", **env_headers(adapter)}
+    headers = {"Accept": "application/json", **env_headers(adapter, bindings)}
     req = urllib.request.Request(url, method=method, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:

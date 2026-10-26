@@ -5,6 +5,10 @@
   "allowed_hosts": ["127.0.0.1"],
   "allowed_binary_roots": [],
   "secret_bindings": {},
+  "identity_bindings": {
+    "requester-a": {"Cookie": "P02_REQUESTER_A_COOKIE"},
+    "requester-b": {"Cookie": "P02_REQUESTER_B_COOKIE"}
+  },
   "operations": [
     {"id": "identity", "kind": "read_identity", "method": "GET", "path": "/api/me"},
     {"id": "own_read", "kind": "read_owned", "method": "GET", "path": "/api/owned"},

@@ -1,4 +1,4 @@
-import json, subprocess, sys, tempfile, unittest, threading
+import json, os, subprocess, sys, tempfile, unittest, threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -36,19 +36,28 @@ class GuardrailTests(unittest.TestCase):
  def test_auth_smoke_executes_declarative_read_only_adapter(self):
   class Handler(BaseHTTPRequestHandler):
    def do_GET(self):
-    payload={"/identity":{"ok":True,"actorId":"USER-A","serverActorId":"USER-A"},"/own":{"ok":True,"owned":True},"/cross":{"ok":False},"/probe":{"ok":False,"unchanged":True}}
+    actor="ACTOR-A" if self.headers.get("Cookie")=="A" else "ACTOR-B"
+    payload={"/identity":{"ok":True,"serverActorId":actor},"/own":{"ok":True,"owned":True},"/cross":{"ok":False},"/before":{"ok":True,"state":"same"},"/probe":{"ok":False},"/after":{"ok":True,"state":"same"}}
     body=json.dumps(payload.get(self.path,{})).encode(); self.send_response(200); self.end_headers(); self.wfile.write(body)
    def log_message(self,*args): pass
   server=HTTPServer(('127.0.0.1',0),Handler); thread=threading.Thread(target=server.serve_forever,daemon=True); thread.start()
   try:
    with tempfile.TemporaryDirectory() as d:
     root=Path(d); base=f'http://127.0.0.1:{server.server_port}'
-    adapter={'schema_version':'guardrails/v1','base_url':base,'allowed_hosts':['127.0.0.1'],'operations':[{'id':'identity','path':'/identity','kind':'read_identity'},{'id':'own_read','path':'/own'},{'id':'cross_read','path':'/cross','kind':'read_other_owned'},{'id':'forbidden_mutation','path':'/probe','kind':'mutation_forbidden'}]}
-    scenario={'schema_version':'guardrails/v1','roles':[{'fixture_id':'USER-A'}],'operations':[{'id':'identity','expected':'200'},{'id':'own_read','expected':'200'},{'id':'cross_read','expected':'200'},{'id':'forbidden_mutation','expected':'200'}],'state_probe':{'before':'same','must_equal':True}}
+    adapter={'schema_version':'guardrails/v1','base_url':base,'allowed_hosts':['127.0.0.1'],'identity_bindings':{'a':{'Cookie':'P02_A'},'b':{'Cookie':'P02_B'}},'operations':[{'id':'identity','path':'/identity','kind':'read_identity'},{'id':'own_read','path':'/own'},{'id':'cross_read','path':'/cross','kind':'read_other_owned'},{'id':'probe_before','path':'/before','kind':'state_probe_before'},{'id':'forbidden_mutation','path':'/probe','kind':'mutation_forbidden'},{'id':'probe_after','path':'/after','kind':'state_probe_after'}]}
+    scenario={'schema_version':'guardrails/v1','identities':[{'id':'a','fixture_id':'USER-A','binding':'a'},{'id':'b','fixture_id':'USER-B','binding':'b'}],'operations':[{'id':'identity','expected':'200'},{'id':'own_read','expected':'200'},{'id':'cross_read','expected':'200'},{'id':'probe_before','expected':'200'},{'id':'forbidden_mutation','expected':'200'},{'id':'probe_after','expected':'200'}],'state_probe':{'must_equal':True}}
+    os.environ['P02_A']='A'; os.environ['P02_B']='B'
     ap=root/'a.json'; sp=root/'s.json'; ap.write_text(json.dumps(adapter)); sp.write_text(json.dumps(scenario))
     r=subprocess.run([sys.executable,str(ROOT/'scripts/smoke_authenticated.py'),'--adapter',ap,'--scenario',sp,'--read-only'],capture_output=True,text=True)
     self.assertEqual(r.returncode,0,r.stdout); self.assertIn('PASS',r.stdout)
   finally: server.shutdown(); server.server_close()
+
+ def test_auth_smoke_rejects_reused_server_identity(self):
+  with tempfile.TemporaryDirectory() as d:
+   root=Path(d); adapter={'schema_version':'guardrails/v1','base_url':'http://127.0.0.1:1','allowed_hosts':['127.0.0.1'],'identity_bindings':{'a':{},'b':{}},'operations':[]}; scenario={'schema_version':'guardrails/v1','identities':[{'id':'a','fixture_id':'USER-A','binding':'a'},{'id':'b','fixture_id':'USER-B','binding':'b'}],'operations':[],'state_probe':{'must_equal':True}}
+   ap=root/'a.json'; sp=root/'s.json'; ap.write_text(json.dumps(adapter)); sp.write_text(json.dumps(scenario))
+   r=subprocess.run([sys.executable,str(ROOT/'scripts/smoke_authenticated.py'),'--adapter',ap,'--scenario',sp,'--read-only'],capture_output=True,text=True)
+   self.assertNotEqual(r.returncode,0); self.assertIn('AUTH002',r.stdout)
 
  def test_smokes_reject_command_and_navigation_blocks_without_runtime(self):
   with tempfile.TemporaryDirectory() as d:
