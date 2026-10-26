@@ -39,11 +39,28 @@ modes:
   - id: auditor
     purpose: revisar trazabilidad, politicas y evidencia
     can_authorize_publication: false
-decision_states:
+decision_state_catalog:
+  product:
+    - NOT_ACCEPTED
+    - PRODUCT_PASS
+  release:
+    - NOT_READY
+    - RELEASE_READY_CONDITIONAL
+  publication:
+    - NOT_AUTHORIZED
+    - PUBLICATION_AUTHORIZED
+current_decision_state:
   product: PRODUCT_PASS
-  release: RELEASE_READY_CONDITIONAL
-  publication: PUBLICATION_AUTHORIZED
+  release: NOT_READY
+  publication: NOT_AUTHORIZED
   independence: true
+not_authorized:
+  - publicacion
+  - merge
+  - release
+  - produccion
+  - advisor_o_incremento_1
+  - frappe_poc
 protected_decisions:
   - D-001
   - D-002
