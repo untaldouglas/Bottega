@@ -505,19 +505,15 @@ def validate_intake_scope(doc: Any) -> list[dict]:
         issues.append(issue("OUT_OF_SCOPE", "proveedor", doc.get("proveedor"), "proveedor distinto de 'none' está prohibido en I1", "blocked"))
     if doc.get("modelo") is not None and doc.get("modelo") != "none":
         issues.append(issue("OUT_OF_SCOPE", "modelo", doc.get("modelo"), "modelo distinto de 'none' está prohibido en I1", "blocked"))
-    # Detección textual de fuera de alcance (Producto 02 / producción / Frappe / LLM / release)
-    textual_fields = [
-        ("initiative.name", (doc.get("initiative") or {}).get("name")),
-        ("necesidad.descripcion", (doc.get("necesidad") or {}).get("descripcion")),
-        ("resultado_esperado.descripcion", (doc.get("resultado_esperado") or {}).get("descripcion")),
-    ]
-    for path, value in textual_fields:
-        if isinstance(value, str) and OUT_OF_SCOPE_TEXT.search(value):
+    # Detección textual de fuera de alcance (Producto 02 / producción / Frappe /
+    # LLM / release / publicación / merge). Recorre TODOS los strings del intake
+    # con el mismo iterador del scan de secretos (iter_strings), de modo que
+    # riesgos, alternativas, actores (trabajo/autoridad/limite/nombre),
+    # alcance.excluido, necesidad.contexto y preguntas_explicitas_no_determinable
+    # queden cubiertos y ningún texto fuera de alcance pase desapercibido.
+    for path, value in iter_strings(doc):
+        if OUT_OF_SCOPE_TEXT.search(value):
             issues.append(issue("OUT_OF_SCOPE", path, value, "contenido fuera de alcance (Producto 02/producción/Frappe/LLM/release)", "blocked"))
-    incluido = ((doc.get("alcance") or {}).get("incluido") or [])
-    for i, item in enumerate(incluido):
-        if isinstance(item, str) and OUT_OF_SCOPE_TEXT.search(item):
-            issues.append(issue("OUT_OF_SCOPE", f"alcance.incluido[{i}]", item, "contenido fuera de alcance (Producto 02/producción/Frappe/LLM/release)", "blocked"))
     return issues
 
 

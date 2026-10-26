@@ -25,7 +25,7 @@ actores:
   nombre: Persona sintética A
   trabajo: Explicar una necesidad y obtener un contrato verificable.
   autoridad: Puede aceptar o rechazar la propuesta.
-  limite: No autoriza release ni publicación.
+  limite: No autoriza transiciones de etapa.
   clasificacion: HECHO
   origen: intake.actores[0]
 trabajos:
@@ -44,7 +44,7 @@ alcance:
   - Contrato verificable del Advisor
   excluido:
   - Datos reales
-  - Producción
+  - Entornos ajenos al sandbox local
   clasificacion: HECHO
 hechos:
 - id: H-01

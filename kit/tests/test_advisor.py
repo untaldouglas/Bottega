@@ -1,4 +1,4 @@
-"""Matriz TDD del Advisor (Incremento 1) — TA-001..TA-022.
+"""Matriz TDD del Advisor (Incremento 1) — TA-001..TA-025.
 
 Cada test declara qué detecta y qué no (contrato TDD negativo, TEST-SEAMS.yaml).
 Comando: python3 -m unittest discover -s kit/tests -p 'test_advisor*.py' -v
@@ -244,6 +244,30 @@ class AdvisorTests(unittest.TestCase):
         """Detecta: subcomando desconocido ⇒ exit 2. No detecta: flags desconocidos."""
         r = run_cli("bogus")
         self.assertEqual(r.returncode, 2)
+
+    def test_ta023_riesgo_producto02_blocked(self):
+        """Detecta: riesgo con 'Producto 02' ⇒ BLOCKED (antes fail-open). No detecta: mutación real."""
+        r = run_cli("validate-intake", "--input", FIX / "intake-riesgo-producto02.yaml")
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        env = load_env(r)
+        self.assertEqual(env["verdict"], "BLOCKED")
+        self.assertTrue(any(i["code"] == "OUT_OF_SCOPE" and i["path"].startswith("riesgos") for i in env["issues"]))
+
+    def test_ta024_riesgo_frappe_blocked(self):
+        """Detecta: riesgo con 'Frappe' ⇒ BLOCKED (antes fail-open). No detecta: dependencia real de Frappe."""
+        r = run_cli("validate-intake", "--input", FIX / "intake-riesgo-frappe.yaml")
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        env = load_env(r)
+        self.assertEqual(env["verdict"], "BLOCKED")
+        self.assertTrue(any(i["code"] == "OUT_OF_SCOPE" and i["path"].startswith("riesgos") for i in env["issues"]))
+
+    def test_ta025_actor_release_produccion_blocked(self):
+        """Detecta: actor con 'release a producción' ⇒ BLOCKED (antes fail-open). No detecta: autorización externa."""
+        r = run_cli("validate-intake", "--input", FIX / "intake-actor-release-produccion.yaml")
+        self.assertEqual(r.returncode, 3, r.stdout + r.stderr)
+        env = load_env(r)
+        self.assertEqual(env["verdict"], "BLOCKED")
+        self.assertTrue(any(i["code"] == "OUT_OF_SCOPE" and i["path"].startswith("actores") for i in env["issues"]))
 
 
 if __name__ == "__main__":
