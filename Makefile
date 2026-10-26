@@ -74,7 +74,7 @@ validate: preflight
 	docker compose -f $(APP_DIR)/compose.yaml config >/dev/null
 
 smoke: container-build
-	@set -eu; trap 'docker compose -f $(APP_DIR)/compose.yaml down --remove-orphans' EXIT; docker compose -f $(APP_DIR)/compose.yaml up -d; for attempt in $$(seq 1 30); do if curl --fail --silent --show-error http://127.0.0.1:4173/ >/dev/null; then exit 0; fi; sleep 1; done; echo 'container did not become ready' >&2; exit 1
+	@set -eu; trap 'docker compose -f $(APP_DIR)/compose.yaml down --remove-orphans' EXIT; docker compose -f $(APP_DIR)/compose.yaml up -d; python3 scripts/smoke_http.py --url http://127.0.0.1:4173/ --attempts 30 --interval 1
 
 container-build:
 	docker compose -f $(APP_DIR)/compose.yaml build
