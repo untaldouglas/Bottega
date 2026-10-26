@@ -15,6 +15,19 @@ python3 scripts/gate_check.py --project ../mi-ejercicio --format markdown
 
 El scaffold crea los briefs, manifiestos, `REVIEW-PACKET.md`, `TEST-SEAMS.yaml` y `runs/`. GitHub no se toca salvo que se proporcionen `--create-private-repo`, `--repo-name` y `--confirm-private-repo`. Nunca se crea un repositorio público.
 
+## Smokes read-only
+
+El adaptador es declarativo (`adapters/example.json`); no acepta comandos, shell, heredocs ni credenciales en JSON. Las credenciales, si el producto las necesita, se enlazan únicamente desde variables de entorno declaradas y se mantienen en memoria. El kit sólo ejecuta operaciones allowlistadas y sanea payloads antes de emitir evidencia.
+
+```bash
+python3 scripts/smoke_authenticated.py --adapter adapters/example.json \
+  --scenario authenticated-smoke.json --read-only --format json
+python3 scripts/smoke_navigation.py --adapter adapters/example.json \
+  --scenario navigation-smoke.json --read-only --format json
+```
+
+El smoke autenticado exige dos identidades sintéticas independientes (`identities`, cada una con su propio `identity_bindings` de entorno), consulta el actor server-side en cada contexto HTTP, verifica lecturas propias y cruzadas, y compara probes reales `state_probe_before`/`state_probe_after` alrededor de la operación prohibida. Rechaza bindings ausentes, actores vacíos o repetidos y mutaciones observadas; nunca confía en un actor enviado por el cliente ni copia `before` a `after`. El smoke de navegación inicia en `/login`, registra requests/redirects saneados y sólo permite hosts/statuses declarados. `canonical_steps` admite únicamente `{"action":"goto","path":"/..."}` (ruta local incluida en `allowed_navigation_paths`) y `{"action":"click","selector":"#..."}`/CSS equivalente. Se rechazan URLs absolutas, hosts externos, traversal, fragmentos, queries sensibles y rutas fuera de allowlist; no se ejecutan comandos, JavaScript ni shell. Si no existe el runtime Playwright/Chromium, el resultado correcto es `BLOCKED` (código 3), nunca `PASS`. Los resultados ejecutados viven en `evidence/<run-id>/`; los criterios no ejecutados permanecen planificados en `TEST-SEAMS.yaml`.
+
 ## Flujo
 
 1. Completar `PROJECT-BRIEF.yaml` (alcance, datos sintéticos/permitidos, riesgos, gates y autorización).

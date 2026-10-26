@@ -1,0 +1,18 @@
+{
+  "schema_version": "guardrails/v1",
+  "product_id": "example",
+  "base_url": "http://127.0.0.1:4173",
+  "allowed_hosts": ["127.0.0.1"],
+  "allowed_binary_roots": [],
+  "secret_bindings": {},
+  "identity_bindings": {
+    "requester-a": {"Cookie": "P02_REQUESTER_A_COOKIE"},
+    "requester-b": {"Cookie": "P02_REQUESTER_B_COOKIE"}
+  },
+  "operations": [
+    {"id": "identity", "kind": "read_identity", "method": "GET", "path": "/api/me"},
+    {"id": "own_read", "kind": "read_owned", "method": "GET", "path": "/api/owned"},
+    {"id": "cross_read", "kind": "read_other_owned", "method": "GET", "path": "/api/other"},
+    {"id": "forbidden_mutation", "kind": "mutation_forbidden", "method": "GET", "path": "/api/mutation-probe"}
+  ]
+}
