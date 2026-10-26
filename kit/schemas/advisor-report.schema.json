@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bottega.untaldouglas.local/schemas/advisor-report.schema.json",
+  "title": "Bottega Advisor Report (Incremento 1)",
+  "description": "Reporte conforme a esquema del Advisor. Formato canónico JSON; plantilla humana en kit/templates/ADVISOR-REPORT.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "initiative_id",
+    "created_at",
+    "engine",
+    "verdict",
+    "problema",
+    "resultado_esperado",
+    "actores",
+    "trabajos",
+    "alternativas",
+    "alcance",
+    "hechos",
+    "supuestos",
+    "preguntas_abiertas",
+    "no_determinable",
+    "requisitos",
+    "criterios_aceptacion",
+    "riesgos",
+    "decisiones_humanas",
+    "proximo_paso",
+    "no_autorizado",
+    "trazabilidad"
+  ],
+  "properties": {
+    "schema_version": { "const": "advisor-report/v1" },
+    "report_id": { "type": "string", "pattern": "^REP-[A-Z0-9_-]{2,63}$" },
+    "initiative_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "deterministic", "proveedor_efectivo", "modelo_efectivo"],
+      "properties": {
+        "name": { "const": "bottega_advisor.py" },
+        "version": { "type": "string" },
+        "deterministic": { "const": true },
+        "proveedor_efectivo": { "const": "none" },
+        "modelo_efectivo": { "const": "none" }
+      }
+    },
+    "verdict": { "enum": ["PASS", "NEEDS_WORK", "BLOCKED"] },
+    "problema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["texto", "clasificacion", "origen"],
+      "properties": {
+        "texto": { "type": "string" },
+        "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] },
+        "origen": { "type": "string" }
+      }
+    },
+    "resultado_esperado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["texto", "clasificacion", "origen"],
+      "properties": {
+        "texto": { "type": "string" },
+        "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] },
+        "origen": { "type": "string" }
+      }
+    },
+    "actores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "rol", "nombre", "clasificacion", "origen"],
+        "properties": {
+          "id": { "type": "string" },
+          "rol": { "type": "string" },
+          "nombre": { "type": "string" },
+          "trabajo": { "type": "string" },
+          "autoridad": { "type": "string" },
+          "limite": { "type": "string" },
+          "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] },
+          "origen": { "type": "string" }
+        }
+      }
+    },
+    "trabajos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "actor_id", "descripcion", "clasificacion", "origen"],
+        "properties": {
+          "id": { "type": "string" },
+          "actor_id": { "type": "string" },
+          "descripcion": { "type": "string" },
+          "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] },
+          "origen": { "type": "string" }
+        }
+      }
+    },
+    "alternativas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "descripcion", "clasificacion"],
+        "properties": {
+          "id": { "type": "string" },
+          "descripcion": { "type": "string" },
+          "tradeoffs": { "type": "string" },
+          "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] }
+        }
+      }
+    },
+    "alcance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incluido", "excluido", "clasificacion"],
+      "properties": {
+        "incluido": { "type": "array", "items": { "type": "string" } },
+        "excluido": { "type": "array", "items": { "type": "string" } },
+        "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] }
+      }
+    },
+    "hechos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "afirmacion", "origen"],
+        "properties": {
+          "id": { "type": "string" },
+          "afirmacion": { "type": "string" },
+          "origen": { "type": "string" }
+        }
+      }
+    },
+    "supuestos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "afirmacion", "origen"],
+        "properties": {
+          "id": { "type": "string" },
+          "afirmacion": { "type": "string" },
+          "origen": { "type": "string" }
+        }
+      }
+    },
+    "preguntas_abiertas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "pregunta", "campo_faltante"],
+        "properties": {
+          "id": { "type": "string" },
+          "pregunta": { "type": "string" },
+          "campo_faltante": { "type": "string" }
+        }
+      }
+    },
+    "no_determinable": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "afirmacion", "razon", "owner_decision"],
+        "properties": {
+          "id": { "type": "string" },
+          "afirmacion": { "type": "string" },
+          "razon": { "type": "string" },
+          "owner_decision": { "type": "string" }
+        }
+      }
+    },
+    "requisitos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rf", "rnf"],
+      "properties": {
+        "rf": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/requisito" } },
+        "rnf": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/requisito" } }
+      }
+    },
+    "criterios_aceptacion": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "descripcion", "metodo", "estado"],
+        "properties": {
+          "id": { "type": "string" },
+          "descripcion": { "type": "string" },
+          "metodo": { "type": "string" },
+          "estado": { "const": "planned" }
+        }
+      }
+    },
+    "riesgos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "descripcion", "mitigacion", "clasificacion", "origen"],
+        "properties": {
+          "id": { "type": "string" },
+          "descripcion": { "type": "string" },
+          "mitigacion": { "type": "string" },
+          "clasificacion": { "enum": ["HECHO", "SUPUESTO", "PREGUNTA_ABIERTA", "NO_DETERMINABLE"] },
+          "origen": { "type": "string" }
+        }
+      }
+    },
+    "decisiones_humanas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision", "owner", "consecuencia", "autorizacion_ejecucion"],
+        "properties": {
+          "id": { "type": "string" },
+          "decision": { "type": "string" },
+          "owner": { "type": "string" },
+          "consecuencia": { "type": "string" },
+          "autorizacion_ejecucion": { "const": false }
+        }
+      }
+    },
+    "proximo_paso": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accion", "detalle"],
+      "properties": {
+        "accion": { "enum": ["solicitar_revision_independiente", "corregir_intake", "detener"] },
+        "detalle": { "type": "string" }
+      }
+    },
+    "no_autorizado": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "trazabilidad": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completa", "requisitos_sin_criterio", "requisitos_sin_prueba", "requisitos_sin_owner"],
+      "properties": {
+        "completa": { "type": "boolean" },
+        "requisitos_sin_criterio": { "type": "array", "items": { "type": "string" } },
+        "requisitos_sin_prueba": { "type": "array", "items": { "type": "string" } },
+        "requisitos_sin_owner": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "requisito": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "descripcion", "criterio", "prueba_planeada", "owner", "estado", "evidencia"],
+      "properties": {
+        "id": { "type": "string" },
+        "descripcion": { "type": "string" },
+        "criterio": { "type": "string" },
+        "prueba_planeada": { "type": "string" },
+        "owner": { "type": "string" },
+        "estado": { "const": "planned" },
+        "evidencia": { "type": "null" }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo sintético de iniciativa"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad sintética: convertir una solicitud de cambio en un contrato verificable sin ejecutar cambios."
+  contexto: "Contexto sintético para el ejercicio del Advisor."
+resultado_esperado:
+  descripcion: "Obtener una propuesta estructurada con hechos, supuestos, preguntas y próximos pasos."
+  no_definido: false
+  medible:
+    metrica: "Cantidad de preguntas abiertas resueltas"
+    baseline: "0"
+    denominador: "preguntas abiertas totales declaradas"
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad y obtener un contrato verificable."
+    autoridad: "Puede aceptar o rechazar la propuesta."
+    limite: "No autoriza transiciones de etapa."
+clasificacion_datos: "SYNTHETIC"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+    - "Entornos ajenos al sandbox local"
+alternativas:
+  - id: "ALT-01"
+    descripcion: "Opción A"
+    tradeoffs: "Trade-off A"
+riesgos:
+  - id: "R-01"
+    descripcion: "Riesgo declarado por el operador"
+    mitigacion: "Mitigación declarada"
+preguntas_explicitas_no_determinable: []
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"
+  autor: "Sintético"
+  fecha: "2026-10-26T00:00:00Z"

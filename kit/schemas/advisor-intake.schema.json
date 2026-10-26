@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bottega.untaldouglas.local/schemas/advisor-intake.schema.json",
+  "title": "Bottega Advisor Intake (Incremento 1)",
+  "description": "Intake estructurado del Advisor. Formato canónico JSON; plantilla humana en kit/templates/ADVISOR-INTAKE.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "initiative",
+    "necesidad",
+    "resultado_esperado",
+    "actores",
+    "clasificacion_datos",
+    "owner",
+    "alcance"
+  ],
+  "properties": {
+    "schema_version": { "const": "advisor-intake/v1" },
+    "initiative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "mode"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,63}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "mode": { "const": "advisor" }
+      }
+    },
+    "necesidad": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["descripcion"],
+      "properties": {
+        "descripcion": { "type": "string", "minLength": 1, "maxLength": 4000 },
+        "contexto": { "type": "string", "maxLength": 2000 }
+      }
+    },
+    "resultado_esperado": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["descripcion", "no_definido"],
+      "properties": {
+        "descripcion": { "type": "string" },
+        "no_definido": { "type": "boolean" },
+        "medible": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "metrica": { "type": "string" },
+            "baseline": { "type": "string" },
+            "denominador": { "type": "string" }
+          }
+        }
+      }
+    },
+    "actores": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "rol", "nombre"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,63}$" },
+          "rol": { "enum": ["director", "usuario_advisor", "operador_taller", "revisor", "bot_etapa", "otro"] },
+          "nombre": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "trabajo": { "type": "string" },
+          "autoridad": { "type": "string" },
+          "limite": { "type": "string" }
+        }
+      }
+    },
+    "clasificacion_datos": { "enum": ["SYNTHETIC", "SYNTHETIC_FIXTURE"] },
+    "owner": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "alcance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incluido", "excluido"],
+      "properties": {
+        "incluido": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "excluido": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "alternativas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "descripcion"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,63}$" },
+          "descripcion": { "type": "string" },
+          "tradeoffs": { "type": "string" }
+        }
+      }
+    },
+    "riesgos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "descripcion"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,63}$" },
+          "descripcion": { "type": "string" },
+          "mitigacion": { "type": "string" }
+        }
+      }
+    },
+    "preguntas_explicitas_no_determinable": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "proveedor": { "const": "none" },
+    "modelo": { "const": "none" },
+    "metadatos": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entorno": { "const": "local-sandbox" },
+        "autor": { "type": "string" },
+        "fecha": { "type": "string" }
+      }
+    }
+  }
+}

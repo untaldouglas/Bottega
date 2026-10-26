@@ -1,0 +1,34 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo sintético con métrica sin baseline"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad sintética con métrica incompleta."
+resultado_esperado:
+  descripcion: "Obtener una propuesta."
+  no_definido: false
+  medible:
+    metrica: "Tiempo de ciclo"
+    baseline: ""
+    denominador: ""
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+clasificacion_datos: "SYNTHETIC"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+alternativas:
+  - id: "ALT-01"
+    descripcion: "Opción A"
+    tradeoffs: "Trade-off A"
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"

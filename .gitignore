@@ -17,3 +17,6 @@ app01/test-results/
 # Expediente local de fabricación Hermes (no distribuible)
 .hermes/
 logs/
+
+# Artefactos de smoke del Advisor (no distribuibles)
+kit/tests/fixtures/advisor/.smoke-*

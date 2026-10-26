@@ -1,0 +1,26 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo sintético con proveedor prohibido"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad sintética."
+resultado_esperado:
+  descripcion: "Obtener una propuesta."
+  no_definido: false
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+clasificacion_datos: "SYNTHETIC"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+proveedor: "openai"
+modelo: "gpt-4"
+metadatos:
+  entorno: "local-sandbox"
