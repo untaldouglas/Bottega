@@ -1,0 +1,86 @@
+schema_version: "1.0"
+product: Bottega 2.0
+increment: I0
+status: APPROVED_GATE_0
+owner: Douglas
+decision_authority: Douglas
+provider:
+  requested_provider: openai-codex
+  requested_model: gpt-5.6-luna
+  effective_provider: openai-codex
+  effective_model: gpt-5.6-luna
+  purpose: materializacion_documental
+  recorded_at: "2026-10-26"
+  secrets_included: false
+scope:
+  included:
+    - contrato de producto
+    - requisitos verificables
+    - modos Advisor, Taller y Auditor
+    - gates, estados y trazabilidad
+    - politica de autonomia gobernada
+    - politica verificable de patch calificado para Frappe v16
+    - roadmap condicionado
+    - decision record machine-readable de Gate 0
+  excluded:
+    - implementacion de runtime
+    - instalacion o validacion de Frappe
+    - PoC o piloto
+    - Producto 02
+    - datos reales, institucionales o secretos
+    - release, publicacion, produccion y merge
+modes:
+  - id: advisor
+    purpose: convertir una necesidad en contrato verificable
+    irreversible_actions: false
+  - id: taller
+    purpose: coordinar trabajo autorizado por etapas
+    irreversible_actions: false
+  - id: auditor
+    purpose: revisar trazabilidad, politicas y evidencia
+    can_authorize_publication: false
+decision_state_catalog:
+  product:
+    - NOT_ACCEPTED
+    - PRODUCT_PASS
+  release:
+    - NOT_READY
+    - RELEASE_READY_CONDITIONAL
+  publication:
+    - NOT_AUTHORIZED
+    - PUBLICATION_AUTHORIZED
+current_decision_state:
+  product: PRODUCT_PASS
+  release: NOT_READY
+  publication: NOT_AUTHORIZED
+  independence: true
+not_authorized:
+  - publicacion
+  - merge
+  - release
+  - produccion
+  - advisor_o_incremento_1
+  - frappe_poc
+protected_decisions:
+  - D-001
+  - D-002
+  - D-003
+  - D-004
+  - D-005
+  - D-006
+  - D-007
+  - D-008
+open_questions:
+  - P1
+  - P2
+  - P3
+  - P4
+  - P5
+  - P6
+  - P7
+references:
+  primary_issue: "https://github.com/untaldouglas/Bottega/issues/1"
+  product_contract: "https://github.com/untaldouglas/Bottega/issues/3"
+  governance: "https://github.com/untaldouglas/Bottega/issues/4"
+  source_artifact: BOTTEGA-2-REQUIREMENTS.md
+  frappe_patch_policy: BOTTEGA-2-FRAPPE-PATCH-POLICY.md

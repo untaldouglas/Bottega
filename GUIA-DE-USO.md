@@ -11,6 +11,19 @@
 
 Bottega es un grupo de seis Bots nuevos y especializados que convierten una necesidad de software en un producto terminado, probado, documentado y listo para compartirse bajo buenas prácticas open source. Usted conduce; cada Bot ejecuta una sola especialidad y deja evidencia en el repositorio del proyecto.
 
+## Contrato Bottega 2.0
+
+El paquete del Incremento 0 está en `docs/product/`, con límites y seguridad en
+`docs/architecture/` y dirección contractual en `docs/adr/`. Gate 0 fue aprobado
+por Douglas; la decisión está registrada en `docs/product/BOTTEGA-2-DECISION-RECORD.yaml`.
+No autoriza implementación, instalación de Frappe, piloto, release, publicación,
+producción ni merge. Los modos Advisor, Taller y Auditor, y los estados
+`PRODUCT_PASS`, `RELEASE_READY_CONDITIONAL` y `PUBLICATION_AUTHORIZED`, son distintos.
+
+La política es fail-closed: un PASS técnico, CI verde o PR abierto no es autorización.
+El primer HTTP 429 abre el circuit breaker; fallback sólo con política declarada y el
+proveedor/modelo efectivo queda registrado sin secretos.
+
 ```text
 Andrea del Verrocchio  → requisitos
 Leonardo da Vinci      → diseño de solución

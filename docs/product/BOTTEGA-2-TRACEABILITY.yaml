@@ -1,0 +1,58 @@
+schema_version: "1.0"
+product: Bottega 2.0
+increment: I0
+status: APPROVED_GATE_0
+source_documents:
+  - BOTTEGA-2-PRODUCT-BRIEF.yaml
+  - BOTTEGA-2-REQUIREMENTS.md
+  - BOTTEGA-2-SUCCESS-METRICS.yaml
+  - BOTTEGA-2-AUTONOMY-POLICY.yaml
+  - BOTTEGA-2-SOLUTION-ROADMAP.md
+  - BOTTEGA-2-UX-SERVICE-DESIGN.md
+  - BOTTEGA-2-FRAPPE-PATCH-POLICY.md
+  - BOTTEGA-2-DECISION-RECORD.yaml
+  - ../architecture/BOTTEGA-2-BOUNDARIES.md
+requirements_to_acceptance:
+  RF-001_004: [CA-001, CA-003, CA-018]
+  RF-005_007: [CA-004, CA-005, CA-019]
+  RF-008_010: [CA-007, CA-008, CA-020]
+  RF-011_015: [CA-009, CA-010, CA-011, CA-012, CA-017]
+  RF-016_017: [CA-013, CA-014]
+  RF-018_019: [CA-015, CA-016]
+  RF-020: [CA-018, CA-019]
+  RNF-001_005: [CA-004, CA-005, CA-010, CA-017, CA-019]
+  RNF-006_012: [CA-012, CA-013, CA-014, CA-015, CA-018, CA-020]
+  RF-021: [CA-021]
+artifacts:
+  - id: product-brief
+    path: BOTTEGA-2-PRODUCT-BRIEF.yaml
+    status: materialized
+  - id: requirements
+    path: BOTTEGA-2-REQUIREMENTS.md
+    status: materialized
+  - id: metrics
+    path: BOTTEGA-2-SUCCESS-METRICS.yaml
+    status: materialized
+  - id: autonomy-policy
+    path: BOTTEGA-2-AUTONOMY-POLICY.yaml
+    status: materialized
+  - id: solution-roadmap
+    path: BOTTEGA-2-SOLUTION-ROADMAP.md
+    status: materialized
+  - id: ux-service-design
+    path: BOTTEGA-2-UX-SERVICE-DESIGN.md
+    status: materialized
+  - id: architecture-boundaries
+    path: ../architecture/BOTTEGA-2-BOUNDARIES.md
+    status: materialized
+  - id: frappe-patch-policy
+    path: BOTTEGA-2-FRAPPE-PATCH-POLICY.md
+    status: materialized
+  - id: gate-0-decision-record
+    path: BOTTEGA-2-DECISION-RECORD.yaml
+    status: approved_gate_0
+provider_record:
+  effective_provider: openai-codex
+  effective_model: gpt-5.6-luna
+  purpose: materializacion_documental
+  secrets_included: false

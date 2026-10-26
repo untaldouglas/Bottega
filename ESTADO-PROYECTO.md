@@ -1,6 +1,6 @@
 # Estado del proyecto — Bottega
 
-**Última actualización:** 2026-10-22 (CST, UTC-06:00)
+**Última actualización:** 2026-10-26 (CST, UTC-06:00)
 
 ## Resumen ejecutivo
 
@@ -15,6 +15,11 @@ Bottega es un método gobernado de desarrollo de software asistido por IA: seis 
 - **Contrato TDD negativo** — `kit/templates/TEST-SEAMS.yaml`: cada seam declara qué detecta y qué no; sin `misses` no hay evidencia de GATE 4.
 - **Diagrama de skills** — `docs/diagrama-skills-matt-pocock.md` (mapa de skills de Matt Pocock por rol).
 - **Plugin Matt Pocock** — actualizado a `5beb35b` (v1.3.1), respaldado y con rollback disponible.
+- **Bottega 2.0 — Incremento 0** — Gate 0 aprobado por Douglas el 2026-10-26;
+  la decisión está materializada en `docs/product/BOTTEGA-2-DECISION-RECORD.yaml`.
+  El contrato y los ADR técnicos quedan aceptados como dirección del contrato, sin
+  autorizar implementación, Frappe, piloto, release, publicación, producción, merge
+  ni cambios en Producto 02.
 
 ## Backlog diferido (con justificación)
 
@@ -31,8 +36,15 @@ Bottega es un método gobernado de desarrollo de software asistido por IA: seis 
 
 ## Decisiones abiertas
 
-- Ninguna bloqueante. La próxima iniciativa (PRODUCTO-002) debe pasar por el piloto comparativo (Caso A / Caso B) documentado en el paquete `bottega-di-douglas`, no generalizar desde PRODUCTO-001.
+- Bottega 2.0 conserva P1–P7 como `NO DETERMINABLE`, las métricas como candidatas sin
+  baseline y `v16.53.0` como baseline candidato; no se inventan límites ni proveedor
+  definitivo.
+- La próxima iniciativa (PRODUCTO-002) debe pasar por el piloto comparativo (Caso A / Caso B)
+  documentado en el paquete `bottega-di-douglas`, no generalizar desde PRODUCTO-001.
 
 ## Siguiente acción recomendada
 
-Ejecutar el piloto comparativo de PRODUCTO-002 usando el kit completo (brief → gates → TDD con seams → review packet → validación → retrospectiva), antes de decidir ADOPTAR / ADAPTAR / DETENER.
+Definir, con decisión separada, si se inicia I1 como una vertical Advisor pequeña antes
+del piloto comparativo de PRODUCTO-002. Toda decisión de merge, implementación, Frappe,
+release, publicación, producción o ADOPTAR / ADAPTAR / DETENER requiere autorización y
+evidencia propias; toda decisión de medición requiere baseline.

@@ -13,3 +13,7 @@ app01/test-results/
 .env
 .env.*
 *.local
+
+# Expediente local de fabricación Hermes (no distribuible)
+.hermes/
+logs/

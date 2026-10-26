@@ -26,6 +26,7 @@ glossary-check:
 docs-check: glossary-check
 	python3 scripts/glossary.py render --check
 	python3 scripts/docs_check.py
+	python3 scripts/check_protected_decisions.py
 
 docs:
 	python3 scripts/glossary.py render
