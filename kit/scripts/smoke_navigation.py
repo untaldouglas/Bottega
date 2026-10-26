@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Execute a canonical navigation smoke with an existing Playwright runtime."""
 from __future__ import annotations
-import argparse, json, sys
+import argparse, json, subprocess, sys
+import os
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 from guardrails import validate_navigation
@@ -37,7 +38,19 @@ def main() -> int:
                 try:
                     from playwright.sync_api import sync_playwright
                 except ImportError:
-                    raise RuntimeBlocked("Playwright runtime is unavailable")
+                    module_path = adapter.get("playwright_module")
+                    if not module_path:
+                        raise RuntimeBlocked("Playwright runtime is unavailable")
+                    node_report = subprocess.run(
+                        ["node", str(Path(__file__).with_name("navigation_runtime.mjs")), str(args.adapter), str(args.scenario)],
+                        capture_output=True, text=True, timeout=int(adapter.get("timeout_ms", 10000)) / 1000 + 10,
+                    )
+                    try:
+                        report = json.loads(node_report.stdout)
+                    except json.JSONDecodeError:
+                        report = {"schema_version": "guardrails/v1", "verdict": "FAIL", "exit_code": 1, "issues": [issue("NAV000", "node runtime returned invalid report")], "mode": "read-only", "observations": observations}
+                    output(report, args.format == "text")
+                    return int(report.get("exit_code", 1))
                 browser_path = adapter.get("chromium_executable")
                 with sync_playwright() as playwright:
                     launch = {"headless": True}
@@ -49,13 +62,36 @@ def main() -> int:
                         else: launch["executable_path"] = str(p)
                     if not errors:
                         browser = playwright.chromium.launch(**launch)
-                        page = browser.new_page()
+                        context = browser.new_context()
+                        for cookie_name, env_name in (adapter.get("auth_cookie_bindings") or {}).items():
+                            if not isinstance(cookie_name, str) or not isinstance(env_name, str) or not env_name.isidentifier():
+                                errors.append(issue("SECURITY002", "invalid auth cookie binding", "adapter.auth_cookie_bindings")); continue
+                            cookie_value = os.environ.get(env_name)
+                            if not cookie_value:
+                                raise RuntimeBlocked(f"missing auth cookie binding: {env_name}")
+                            context.add_cookies([{"name": cookie_name, "value": cookie_value, "url": base}])
+                        page = context.new_page()
                         def on_request(req):
                             try: host = req.url.split("/", 3)[2].split(":", 1)[0]
                             except IndexError: host = ""
                             observations.append({"kind": "request", "host": host, "method": req.method, "path": req.url.split(host, 1)[-1][:240] if host else ""})
                             if host not in hosts: errors.append(issue("NAV003", "external host denied", "requests"))
                         page.on("request", on_request)
+                        def on_response(response):
+                            parsed = response.url.split("/", 3)
+                            path = "/" + parsed[3].split("?", 1)[0] if len(parsed) > 3 else "/"
+                            if response.status in set(scenario.get("allowed_statuses", [])):
+                                return
+                            allowed_error = any(
+                                isinstance(item, dict)
+                                and item.get("status") == response.status
+                                and item.get("path") == path
+                                and item.get("decision_ref")
+                                for item in scenario.get("known_errors", [])
+                            )
+                            if not allowed_error:
+                                errors.append(issue("NAV002", "status not allowlisted", f"responses.{path}"))
+                        page.on("response", on_response)
                         response = page.goto(start, wait_until="networkidle", timeout=int(adapter.get("timeout_ms", 10000)))
                         if response is None or response.status not in set(scenario.get("allowed_statuses", [])): errors.append(issue("NAV002", "canonical start status not allowlisted"))
                         for step in adapter.get("canonical_steps", []):
@@ -66,6 +102,7 @@ def main() -> int:
                         current_host = page.url.split("/", 3)[2].split(":", 1)[0]
                         if current_host not in hosts: errors.append(issue("NAV003", "final host not allowlisted"))
                         observations.append({"kind": "final", "status": response.status if response else None, "path": page.url.split(current_host, 1)[-1][:240]})
+                        context.close()
                         browser.close()
     except RuntimeBlocked as exc:
         report = {"schema_version": "guardrails/v1", "verdict": "BLOCKED", "exit_code": 3, "issues": [issue("NAV_RUNTIME", str(exc))], "mode": "read-only", "observations": observations}

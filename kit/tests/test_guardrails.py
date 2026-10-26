@@ -28,15 +28,15 @@ class GuardrailTests(unittest.TestCase):
  def test_auth_smoke_executes_declarative_read_only_adapter(self):
   class Handler(BaseHTTPRequestHandler):
    def do_GET(self):
-    payload={"/identity":{"actorId":"USER-A","serverActorId":"USER-A"},"/own":{"owned":True},"/cross":{},"/probe":{"unchanged":True}}
-    body=json.dumps(payload.get(self.path,{})).encode(); self.send_response(200 if self.path != '/cross' else 403); self.end_headers(); self.wfile.write(body)
+    payload={"/identity":{"ok":True,"actorId":"USER-A","serverActorId":"USER-A"},"/own":{"ok":True,"owned":True},"/cross":{"ok":False},"/probe":{"ok":False,"unchanged":True}}
+    body=json.dumps(payload.get(self.path,{})).encode(); self.send_response(200); self.end_headers(); self.wfile.write(body)
    def log_message(self,*args): pass
   server=HTTPServer(('127.0.0.1',0),Handler); thread=threading.Thread(target=server.serve_forever,daemon=True); thread.start()
   try:
    with tempfile.TemporaryDirectory() as d:
     root=Path(d); base=f'http://127.0.0.1:{server.server_port}'
     adapter={'schema_version':'guardrails/v1','base_url':base,'allowed_hosts':['127.0.0.1'],'operations':[{'id':'identity','path':'/identity','kind':'read_identity'},{'id':'own_read','path':'/own'},{'id':'cross_read','path':'/cross','kind':'read_other_owned'},{'id':'forbidden_mutation','path':'/probe','kind':'mutation_forbidden'}]}
-    scenario={'schema_version':'guardrails/v1','roles':[{'fixture_id':'USER-A'}],'operations':[{'id':'identity','expected':'200'},{'id':'own_read','expected':'200'},{'id':'cross_read','expected':'403|404'},{'id':'forbidden_mutation','expected':'200'}],'state_probe':{'before':'same','must_equal':True}}
+    scenario={'schema_version':'guardrails/v1','roles':[{'fixture_id':'USER-A'}],'operations':[{'id':'identity','expected':'200'},{'id':'own_read','expected':'200'},{'id':'cross_read','expected':'200'},{'id':'forbidden_mutation','expected':'200'}],'state_probe':{'before':'same','must_equal':True}}
     ap=root/'a.json'; sp=root/'s.json'; ap.write_text(json.dumps(adapter)); sp.write_text(json.dumps(scenario))
     r=subprocess.run([sys.executable,str(ROOT/'scripts/smoke_authenticated.py'),'--adapter',ap,'--scenario',sp,'--read-only'],capture_output=True,text=True)
     self.assertEqual(r.returncode,0,r.stdout); self.assertIn('PASS',r.stdout)

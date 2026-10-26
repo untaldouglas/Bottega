@@ -90,7 +90,7 @@ def validate_navigation(data: dict) -> dict:
     for i,obs in enumerate(data.get("observations", data.get("requests",[]))):
         host=obs.get("host"); status=obs.get("status"); p=f"observations[{i}]"
         if host not in hosts: errors.append(issue("NAV003",p+".host",host,"external host denied"))
-        if status not in statuses and not any(k.get("status")==status and k.get("decision_ref") for k in data.get("known_errors",[]) if isinstance(k,dict)):
+        if status not in statuses and not any(k.get("status")==status and k.get("path") == obs.get("path") and k.get("decision_ref") for k in data.get("known_errors",[]) if isinstance(k,dict)):
             errors.append(issue("NAV002",p+".status",status,"status not allowlisted"))
     if data.get("diagnostic_routes_are_not_canonical") and data.get("canonical_start") in data.get("diagnostic_routes",[]): errors.append(issue("NAV001","canonical_start",data.get("canonical_start"),"diagnostic route cannot be canonical"))
     return report("navigation",errors,warnings)

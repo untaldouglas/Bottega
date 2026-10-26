@@ -45,9 +45,20 @@ def main() -> int:
                     errors.append(issue("AUTH005", str(exc), f"operations.{op_id}")); continue
                 if not matches(result["status"], scenario_op.get("expected")):
                     errors.append(issue("AUTH001" if op.get("kind") == "read_other_owned" else "AUTH004", "unexpected status", f"operations.{op_id}"))
+                payload = result.get("payload") if isinstance(result.get("payload"), dict) else {}
+                message = payload.get("message") if isinstance(payload.get("message"), dict) else payload
+                if not isinstance(message, dict):
+                    message = {}
+                if op.get("kind") in {"read_other_owned", "mutation_forbidden"} and message.get("ok") is not False:
+                    errors.append(issue("AUTH001", "prohibited operation was not denied", f"operations.{op_id}"))
                 observations.append({"operation": op_id, "status": result["status"], "payload": safe_text(result.get("payload"))})
                 if op.get("kind") == "read_identity":
                     payload = result.get("payload") if isinstance(result.get("payload"), dict) else {}
+                    message = payload.get("message") if isinstance(payload.get("message"), dict) else payload
+                    if not isinstance(message, dict):
+                        message = {}
+                    if message.get("ok") is not True:
+                        errors.append(issue("AUTH001", "identity endpoint did not confirm server-side session", f"operations.{op_id}"))
                     if payload.get("actorId") is not None and payload.get("actorId") != payload.get("serverActorId", payload.get("actorId")):
                         errors.append(issue("AUTH001", "identity did not come from server-side session", f"operations.{op_id}"))
             # A second read is the only permitted state probe; no mutation is sent.

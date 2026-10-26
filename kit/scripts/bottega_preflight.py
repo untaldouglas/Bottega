@@ -34,13 +34,13 @@ def main():
         try: config = json.loads(a.config.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError): config = {"config_error": True}
     project_root = a.project.expanduser().resolve()
-    def explicit_probe(key):
+    def explicit_probe(key, *, executable=False):
         value = config.get(key)
         if not value: return {"available": False, "source": "none", "configuration_explicit": False}
         path = Path(value).expanduser()
         roots = [Path(x).expanduser().resolve() for x in config.get("allowed_binary_roots", []) if Path(x).expanduser().is_absolute()]
         resolved = path.resolve()
-        safe = path.is_file() and os.access(path, os.X_OK) and any(resolved == r or r in resolved.parents for r in roots)
+        safe = path.is_file() and (not executable or os.access(path, os.X_OK)) and any(resolved == r or r in resolved.parents for r in roots)
         return {"available": safe, "source": "config", "path": str(resolved) if safe else "redacted", "safe_path": safe, "configuration_explicit": True}
     browser_path = next((shutil.which(x) for x in ("google-chrome", "chromium", "chromium-browser", "firefox") if shutil.which(x)), "")
     browser = bool(browser_path)
@@ -49,7 +49,7 @@ def main():
               "docker": tools["docker"], "node_npm": {"node": tools["node"], "npm": tools["npm"]},
               "ports": ports, "browser_available": browser, "fallback_policy": fallback,
               "browser": {"path": browser_path if browser else "", "available": browser, "source": "PATH" if browser else "none"},
-              "playwright": explicit_probe("playwright_cli"), "chromium": explicit_probe("chromium_executable"),
+              "playwright": explicit_probe("playwright_cli"), "chromium": explicit_probe("chromium_executable", executable=True),
               "configuration_explicit": bool(a.config), "path_search_used": False, "network_required": False,
               "scratch_root": str(Path(config.get("scratch_root", project_root)).expanduser().resolve()),
               "strategy": {"shell": False, "allowed": ["declarative-http", "playwright-existing-runtime"]},
