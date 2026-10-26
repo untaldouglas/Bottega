@@ -14,6 +14,11 @@ FILES = {
     "templates/EVIDENCE-MANIFEST.json": TEMPLATES / "EVIDENCE-MANIFEST.json",
     "REVIEW-PACKET.md": TEMPLATES / "REVIEW-PACKET.md",
     "TEST-SEAMS.yaml": TEMPLATES / "TEST-SEAMS.yaml",
+    "gate-record.json": TEMPLATES / "GATE-RECORD.json",
+    "traceability.json": TEMPLATES / "TRACEABILITY-MANIFEST.json",
+    "authenticated-smoke.json": TEMPLATES / "AUTHENTICATED-SMOKE.json",
+    "navigation-smoke.json": TEMPLATES / "NAVIGATION-SMOKE.json",
+    "preflight.json": TEMPLATES / "PREFLIGHT-CONFIG.json",
 }
 
 def parse_args():

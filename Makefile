@@ -1,10 +1,19 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
 
 help:
-	@printf '%s\n' 'Targets: setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs'
+	@printf '%s\n' 'Targets: setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs kit-test guardrails-check guardrails-preflight'
+
+kit-test:
+	NODE_ENV=test python3 -m unittest discover -s kit/tests -v
+
+guardrails-check:
+	@if test -f gate-record.json; then python3 kit/scripts/gate_check.py --project . --manifest gate-record.json --evidence-root . --format json --read-only; else echo '{"status":"SKIPPED","reason":"no gate-record.json"}'; fi
+
+guardrails-preflight:
+	python3 kit/scripts/bottega_preflight.py --project . --format json --dry-run --config kit/templates/PREFLIGHT-CONFIG.json
 
 glossary-add:
 	@test -n "$(TERM)" || (echo 'Uso: make glossary-add TERM="Concepto" CATEGORY=proceso OWNER=equipo DEFINITION="..." CONTEXT="..." SOURCE=GUIA-DE-USO.md REVIEW_DUE=YYYY-MM-DD' >&2; exit 2)

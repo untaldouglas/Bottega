@@ -1,0 +1,1 @@
+{"schema_version":"guardrails/v1","allowed_binary_roots":[],"playwright_cli":null,"chromium_executable":null,"docker_required":false,"scratch_root":".","network_policy":"deny","timeout_seconds":5}
