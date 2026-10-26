@@ -1,10 +1,19 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
 
 help:
-	@printf '%s\n' 'Targets: setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs'
+	@printf '%s\n' 'Targets: setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs kit-test guardrails-check guardrails-preflight'
+
+kit-test:
+	NODE_ENV=test python3 -m unittest discover -s kit/tests -v
+
+guardrails-check:
+	@if test -f gate-record.json; then python3 kit/scripts/gate_check.py --project . --manifest gate-record.json --evidence-root . --format json --read-only; else echo '{"status":"SKIPPED","reason":"no gate-record.json"}'; fi
+
+guardrails-preflight:
+	python3 kit/scripts/bottega_preflight.py --project . --format json --dry-run --config kit/templates/PREFLIGHT-CONFIG.json
 
 glossary-add:
 	@test -n "$(TERM)" || (echo 'Uso: make glossary-add TERM="Concepto" CATEGORY=proceso OWNER=equipo DEFINITION="..." CONTEXT="..." SOURCE=GUIA-DE-USO.md REVIEW_DUE=YYYY-MM-DD' >&2; exit 2)
@@ -65,7 +74,7 @@ validate: preflight
 	docker compose -f $(APP_DIR)/compose.yaml config >/dev/null
 
 smoke: container-build
-	@set -eu; trap 'docker compose -f $(APP_DIR)/compose.yaml down --remove-orphans' EXIT; docker compose -f $(APP_DIR)/compose.yaml up -d; for attempt in $$(seq 1 30); do if curl --fail --silent --show-error http://127.0.0.1:4173/ >/dev/null; then exit 0; fi; sleep 1; done; echo 'container did not become ready' >&2; exit 1
+	@set -eu; trap 'docker compose -f $(APP_DIR)/compose.yaml down --remove-orphans' EXIT; docker compose -f $(APP_DIR)/compose.yaml up -d; python3 scripts/smoke_http.py --url http://127.0.0.1:4173/ --attempts 30 --interval 1
 
 container-build:
 	docker compose -f $(APP_DIR)/compose.yaml build

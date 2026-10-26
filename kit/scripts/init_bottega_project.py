@@ -14,6 +14,12 @@ FILES = {
     "templates/EVIDENCE-MANIFEST.json": TEMPLATES / "EVIDENCE-MANIFEST.json",
     "REVIEW-PACKET.md": TEMPLATES / "REVIEW-PACKET.md",
     "TEST-SEAMS.yaml": TEMPLATES / "TEST-SEAMS.yaml",
+    "gate-record.json": TEMPLATES / "GATE-RECORD.json",
+    "traceability.json": TEMPLATES / "TRACEABILITY-MANIFEST.json",
+    "authenticated-smoke.json": TEMPLATES / "AUTHENTICATED-SMOKE.json",
+    "navigation-smoke.json": TEMPLATES / "NAVIGATION-SMOKE.json",
+    "preflight.json": TEMPLATES / "PREFLIGHT-CONFIG.json",
+    "adapters/example.json": TEMPLATES / "ADAPTER.json",
 }
 
 def parse_args():
@@ -61,6 +67,7 @@ def main():
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(text, encoding="utf-8")
     (target / "runs").mkdir(exist_ok=True)
+    (target / "evidence").mkdir(exist_ok=True)
     (target / "runs" / ".gitkeep").write_text("", encoding="utf-8")
     for name in (".gitignore", ".prettierignore", ".dockerignore"):
         shutil.copy2(ROOT / name, target / name)
