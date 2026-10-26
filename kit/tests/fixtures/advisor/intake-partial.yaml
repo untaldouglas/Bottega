@@ -1,0 +1,32 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-02"
+  name: "Intake parcial sintético"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad parcialmente especificada."
+resultado_esperado:
+  descripcion: ""
+  no_definido: true
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+  - id: "ACTOR-SYN-02"
+    rol: "revisor"
+    nombre: "Persona sintética B"
+clasificacion_datos: "SYNTHETIC"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Propuesta del Advisor"
+  excluido:
+    - "Datos reales"
+alternativas: []
+preguntas_explicitas_no_determinable:
+  - "Umbral de adopción no determinado"
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"

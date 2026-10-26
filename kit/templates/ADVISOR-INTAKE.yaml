@@ -1,0 +1,49 @@
+# Bottega Advisor — plantilla humana de intake (Incremento 1)
+# Formato canónico: JSON (este YAML es equivalente; el runtime escribe JSON).
+# Campos fijos: schema_version, initiative.mode, proveedor, modelo, metadatos.entorno.
+# clasificacion_datos sólo admite SYNTHETIC o SYNTHETIC_FIXTURE. Sin secretos ni datos reales.
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"        # ^[A-Z][A-Z0-9_-]{2,63}$ (sintético en I1)
+  name: "Ejemplo sintético de iniciativa"   # 1–120 caracteres
+  mode: "advisor"                       # fijo en I1
+necesidad:
+  descripcion: "Descripción literal de la necesidad. No incluyas secretos ni datos institucionales."
+  contexto: "Contexto opcional."
+resultado_esperado:
+  descripcion: "Qué se espera obtener."
+  no_definido: false                    # si true, descripcion debe estar vacío
+  medible:
+    metrica: ""                         # sólo si no_definido=false
+    baseline: ""                        # si metrica presente y vacío ⇒ NO DETERMINABLE
+    denominador: ""                     # idem
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"              # director|usuario_advisor|operador_taller|revisor|bot_etapa|otro
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad y obtener un contrato verificable."  # si ausente ⇒ pregunta abierta
+    autoridad: "Puede aceptar o rechazar la propuesta."
+    limite: "No autoriza release ni publicación."
+clasificacion_datos: "SYNTHETIC"        # o SYNTHETIC_FIXTURE; otro valor ⇒ BLOCKED
+owner: "Owner sintético"                # 1–120 caracteres, identificador (no credencial)
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+    - "Producción"
+alternativas:
+  - id: "ALT-01"
+    descripcion: "Opción A"
+    tradeoffs: "Trade-off A"
+riesgos:
+  - id: "R-01"
+    descripcion: "Riesgo declarado por el operador"
+    mitigacion: "Mitigación"
+preguntas_explicitas_no_determinable: []   # pasan directo a no_determinable del reporte
+proveedor: "none"                       # fijo; otro valor ⇒ BLOCKED (I1 prohíbe LLM)
+modelo: "none"                          # fijo
+metadatos:
+  entorno: "local-sandbox"              # fijo
+  autor: "Sintético"
+  fecha: "2026-10-26T00:00:00Z"         # ISO-8601 UTC; si se omite, usa --now/reloj

@@ -1,0 +1,26 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo fuera de alcance"
+  mode: "advisor"
+necesidad:
+  descripcion: "Migrar Producto 02 a producción."
+resultado_esperado:
+  descripcion: "Obtener una propuesta."
+  no_definido: false
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+clasificacion_datos: "SYNTHETIC"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Migración de Producto 02"
+  excluido:
+    - "Datos reales"
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"

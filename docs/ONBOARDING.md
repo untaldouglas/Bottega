@@ -101,4 +101,30 @@ Reglas de oro: **un solo Bot por etapa** (nunca `@all`), **la misma ruta de proy
 2. Exige el **paquete de revisión** (`REVIEW-PACKET.md`: Summary → Evidence → Merge Danger) antes de cada validación.
 3. Después de cada cierre, corre la **retrospectiva** para mejorar el método (la ejecuta una persona autorizada, nunca un Bot solo).
 
+## 9. Advisor (Incremento 1) — motor determinista, sólo lectura
+
+El Advisor convierte una necesidad en un contrato verificable (hechos, supuestos, preguntas abiertas, NO DETERMINABLE, requisitos y criterios) **sin LLM ni proveedor**. No ejecuta cambios: toda salida es una propuesta de sólo lectura que nunca autoriza release, publicación ni producción.
+
+### Subcomandos
+
+```bash
+python3 kit/scripts/bottega_advisor.py validate-intake --input kit/tests/fixtures/advisor/intake-valid.yaml
+python3 kit/scripts/bottega_advisor.py prepare-report --intake kit/tests/fixtures/advisor/intake-valid.yaml \
+  --out report.json --now 2026-10-26T00:00:00Z
+python3 kit/scripts/bottega_advisor.py validate-report --input report.json
+python3 kit/scripts/bottega_advisor.py export-casefile --intake kit/tests/fixtures/advisor/intake-valid.yaml \
+  --report report.json --out ./casefile
+```
+
+Códigos de salida estables (los consume CI): `0` PASS, `1` NEEDS_WORK, `2` CLI/IO, `3` BLOCKED.
+
+### Reglas y límites
+
+- Datos sintéticos por defecto (`SYNTHETIC` / `SYNTHETIC_FIXTURE`). Secretos, datos reales/institucionales, Producto 02, producción, Frappe o proveedor/modelo distinto de `none` ⇒ `BLOCKED` (exit 3), cero efecto.
+- Todo campo no verificable se marca `NO DETERMINABLE`; el motor nunca inventa un valor ni lo convierte en supuesto silencioso.
+- El reporte es determinista: misma entrada + mismo `--now` ⇒ bytes idénticos.
+- El expediente exportado incluye un manifiesto de hash; un tampering ⇒ `HASH_MISMATCH` (exit 3).
+
+Correr las pruebas: `make advisor-validate` (o `make advisor-test`). El `PASS` técnico del Advisor no autoriza ejecución, release, publicación ni producción.
+
 Consulta de referencia completa: `GUIA-DE-USO.md`.

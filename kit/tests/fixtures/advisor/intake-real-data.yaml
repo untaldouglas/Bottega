@@ -1,0 +1,26 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo sintético con datos reales"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad que declara datos institucionales."
+resultado_esperado:
+  descripcion: "Obtener una propuesta."
+  no_definido: false
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+clasificacion_datos: "REAL"
+owner: "Owner sintético"
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"

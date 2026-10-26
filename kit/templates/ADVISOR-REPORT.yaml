@@ -1,0 +1,85 @@
+# Bottega Advisor — plantilla humana de reporte (Incremento 1)
+# Formato canónico: JSON (este YAML es equivalente; el runtime escribe JSON).
+# Generado por kit/scripts/bottega_advisor.py prepare-report. Sólo lectura.
+schema_version: "advisor-report/v1"
+report_id: "REP-SYN-0001"                # ^REP-[A-Z0-9_-]{2,63}$, único y determinista
+initiative_id: "INICIATIVA-SINTETICA-01"
+created_at: "2026-10-26T00:00:00Z"       # de --now / reloj
+engine:
+  name: "bottega_advisor.py"
+  version: "1.0.0"
+  deterministic: true
+  proveedor_efectivo: "none"             # sin LLM
+  modelo_efectivo: "none"
+verdict: "PASS"                          # PASS|NEEDS_WORK|BLOCKED; nunca autoriza
+problema:
+  texto: "Descripción literal de la necesidad."
+  clasificacion: "HECHO"                 # HECHO|SUPUESTO|PREGUNTA_ABIERTA|NO_DETERMINABLE
+  origen: "intake.necesidad.descripcion"
+resultado_esperado:
+  texto: "Qué se espera obtener."
+  clasificacion: "HECHO"
+  origen: "intake.resultado_esperado.descripcion"
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad y obtener un contrato verificable."
+    autoridad: "Puede aceptar o rechazar la propuesta."
+    limite: "No autoriza release ni publicación."
+    clasificacion: "HECHO"
+    origen: "intake.actores[0]"
+trabajos:
+  - id: "TRAB-01"
+    actor_id: "ACTOR-SYN-01"
+    descripcion: "Explicar una necesidad y obtener un contrato verificable."
+    clasificacion: "HECHO"
+    origen: "intake.actores[0].trabajo"
+alternativas:
+  - id: "ALT-01"
+    descripcion: "Opción A"
+    tradeoffs: "Trade-off A"
+    clasificacion: "HECHO"
+alcance:
+  incluido: ["Contrato verificable del Advisor"]
+  excluido: ["Datos reales", "Producción"]
+  clasificacion: "HECHO"
+hechos:
+  - id: "H-01"
+    afirmacion: "La clasificación de datos declarada es SYNTHETIC."
+    origen: "intake.clasificacion_datos"
+supuestos:
+  - id: "S-01"
+    afirmacion: "El entorno declarado es local-sandbox (default aplicado)."
+    origen: "default"
+preguntas_abiertas:
+  - id: "P-01"
+    pregunta: "El actor ACTOR-SYN-02 no declara su trabajo crítico."
+    campo_faltante: "actores[1].trabajo"
+no_determinable:
+  - id: "ND-01"
+    afirmacion: "No hay alternativas declaradas."
+    razon: "El motor no sintetiza alternativas sin entrada del operador."
+    owner_decision: "Operador/Douglas"
+requisitos:
+  rf: []                                 # biblioteca fija (RF-001/002/007/015)
+  rnf: []                                # biblioteca fija (RNF-006/010/011)
+criterios_aceptacion: []                 # CA-001/003/005/012/019
+riesgos: []                              # bibliotecarios + declarados por el operador
+decisiones_humanas: []                   # siempre presentes; autorizacion_ejecucion: false
+proximo_paso:
+  accion: "solicitar_revision_independiente"  # solicitar_revision_independiente|corregir_intake|detener
+  detalle: "Reporte válido; solicitar revisión independiente antes de cualquier transición."
+no_autorizado:
+  - "ejecucion"
+  - "release"
+  - "publicacion"
+  - "produccion"
+  - "merge"
+  - "frappe"
+  - "llm_proveedor"
+trazabilidad:
+  completa: true
+  requisitos_sin_criterio: []
+  requisitos_sin_prueba: []
+  requisitos_sin_owner: []

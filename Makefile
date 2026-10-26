@@ -1,7 +1,9 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight advisor-test advisor-smoke advisor-negative advisor-validate
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
+ADVISOR := python3 kit/scripts/bottega_advisor.py
+FIXTURES := kit/tests/fixtures/advisor
 
 help:
 	@printf '%s\n' 'Targets: setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs kit-test guardrails-check guardrails-preflight'
@@ -14,6 +16,27 @@ guardrails-check:
 
 guardrails-preflight:
 	python3 kit/scripts/bottega_preflight.py --project . --format json --dry-run --config kit/templates/PREFLIGHT-CONFIG.json
+
+# Advisor del Incremento 1 — determinista, sin LLM, sólo lectura.
+advisor-test:
+	python3 -m unittest discover -s kit/tests -p 'test_advisor*.py' -v
+
+advisor-smoke:
+	$(ADVISOR) validate-intake --input $(FIXTURES)/intake-valid.yaml
+	$(ADVISOR) prepare-report --intake $(FIXTURES)/intake-valid.yaml \
+	  --out $(FIXTURES)/.smoke-report.json --now 2026-10-26T00:00:00Z
+	$(ADVISOR) validate-report --input $(FIXTURES)/.smoke-report.json
+	$(ADVISOR) export-casefile --intake $(FIXTURES)/intake-valid.yaml \
+	  --report $(FIXTURES)/.smoke-report.json --out $(FIXTURES)/.smoke-casefile
+
+advisor-negative:
+	@$(ADVISOR) validate-intake --input $(FIXTURES)/intake-secret.yaml >/dev/null 2>&1; test $$? -eq 3
+	@$(ADVISOR) validate-intake --input $(FIXTURES)/intake-out-of-scope.yaml >/dev/null 2>&1; test $$? -eq 3
+	@$(ADVISOR) validate-intake --input $(FIXTURES)/intake-missing-owner.yaml >/dev/null 2>&1; test $$? -eq 1
+	@echo 'advisor-negative: 3/3 casos negativos con exit code esperado'
+
+advisor-validate: advisor-test advisor-smoke advisor-negative
+
 
 glossary-add:
 	@test -n "$(TERM)" || (echo 'Uso: make glossary-add TERM="Concepto" CATEGORY=proceso OWNER=equipo DEFINITION="..." CONTEXT="..." SOURCE=GUIA-DE-USO.md REVIEW_DUE=YYYY-MM-DD' >&2; exit 2)
@@ -80,7 +103,7 @@ smoke: container-build
 container-build:
 	docker compose -f $(APP_DIR)/compose.yaml build
 
-ci: validate smoke
+ci: validate smoke advisor-validate
 
 # Validación de prerrequisitos del método (solo lectura, idempotente).
 doctor:

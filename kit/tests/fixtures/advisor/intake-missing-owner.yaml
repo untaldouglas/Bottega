@@ -1,0 +1,25 @@
+schema_version: "advisor-intake/v1"
+initiative:
+  id: "INICIATIVA-SINTETICA-01"
+  name: "Ejemplo sintético sin owner"
+  mode: "advisor"
+necesidad:
+  descripcion: "Necesidad sintética sin propietario declarado."
+resultado_esperado:
+  descripcion: "Obtener una propuesta estructurada."
+  no_definido: false
+actores:
+  - id: "ACTOR-SYN-01"
+    rol: "usuario_advisor"
+    nombre: "Persona sintética A"
+    trabajo: "Explicar una necesidad."
+clasificacion_datos: "SYNTHETIC"
+alcance:
+  incluido:
+    - "Contrato verificable del Advisor"
+  excluido:
+    - "Datos reales"
+proveedor: "none"
+modelo: "none"
+metadatos:
+  entorno: "local-sandbox"

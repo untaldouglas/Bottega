@@ -1,0 +1,204 @@
+schema_version: advisor-report/v1
+report_id: REP-620EFA73-0001
+initiative_id: INICIATIVA-SINTETICA-01
+created_at: '2026-10-26T00:00:00Z'
+engine:
+  name: bottega_advisor.py
+  version: 1.0.0
+  deterministic: true
+  proveedor_efectivo: none
+  modelo_efectivo: none
+verdict: PASS
+problema:
+  texto: 'Necesidad sintética: convertir una solicitud de cambio en un contrato verificable
+    sin ejecutar cambios.'
+  clasificacion: HECHO
+  origen: intake.necesidad.descripcion
+resultado_esperado:
+  texto: Obtener una propuesta estructurada con hechos, supuestos, preguntas y próximos
+    pasos.
+  clasificacion: HECHO
+  origen: intake.resultado_esperado.descripcion
+actores:
+- id: ACTOR-SYN-01
+  rol: usuario_advisor
+  nombre: Persona sintética A
+  trabajo: Explicar una necesidad y obtener un contrato verificable.
+  autoridad: Puede aceptar o rechazar la propuesta.
+  limite: No autoriza release ni publicación.
+  clasificacion: HECHO
+  origen: intake.actores[0]
+trabajos:
+- id: TRAB-01
+  actor_id: ACTOR-SYN-01
+  descripcion: Explicar una necesidad y obtener un contrato verificable.
+  clasificacion: HECHO
+  origen: intake.actores[0].trabajo
+alternativas:
+- id: ALT-01
+  descripcion: Opción A
+  tradeoffs: Trade-off A
+  clasificacion: HECHO
+alcance:
+  incluido:
+  - Contrato verificable del Advisor
+  excluido:
+  - Datos reales
+  - Producción
+  clasificacion: HECHO
+hechos:
+- id: H-01
+  afirmacion: La clasificación de datos declarada es SYNTHETIC.
+  origen: intake.clasificacion_datos
+- id: H-02
+  afirmacion: El modo de la iniciativa es advisor.
+  origen: intake.initiative.mode
+- id: H-03
+  afirmacion: El proveedor y modelo declarados son none (sin LLM).
+  origen: intake.proveedor
+supuestos:
+- id: S-01
+  afirmacion: El entorno de ejecución es local-sandbox (default aplicado).
+  origen: default
+- id: S-02
+  afirmacion: Los datos sintéticos no demuestran desempeño de producto.
+  origen: default
+preguntas_abiertas: []
+no_determinable: []
+requisitos:
+  rf:
+  - id: RF-001
+    descripcion: Modo Advisor distinguible con propósito, permisos, salida y límites
+      visibles.
+    criterio: CA-001
+    prueba_planeada: TA-001
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  - id: RF-002
+    descripcion: Advisor produce pregunta, problema, actores, trabajos, alcance, supuestos,
+      riesgos, requisitos y criterios, marcando lo no verificable como NO DETERMINABLE.
+    criterio: CA-003
+    prueba_planeada: TA-008
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  - id: RF-007
+    descripcion: Trazabilidad requisito → criterio → prueba → owner → resultado (documental).
+    criterio: CA-005
+    prueba_planeada: TA-014
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  - id: RF-015
+    descripcion: Datos sintéticos por defecto; sin secretos en artefactos/logs.
+    criterio: CA-012
+    prueba_planeada: TA-004
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  rnf:
+  - id: RNF-006
+    descripcion: No se revelan secretos, tokens, credenciales, rutas privadas ni datos
+      institucionales.
+    criterio: CA-012
+    prueba_planeada: TA-005
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  - id: RNF-010
+    descripcion: Cada bloqueo indica condición incumplida, evidencia esperada y responsable.
+    criterio: CA-003
+    prueba_planeada: TA-002
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+  - id: RNF-011
+    descripcion: Expediente exportable/revisable sin sesión viva del proveedor.
+    criterio: CA-019
+    prueba_planeada: TA-015
+    owner: Owner sintético
+    estado: planned
+    evidencia: null
+criterios_aceptacion:
+- id: CA-001
+  descripcion: Dado un expediente nuevo, una revisión de interfaz/documentación muestra
+    los tres modos Advisor, Taller y Auditor, cada uno con objetivo, entrada, salida
+    y límites; falta de cualquiera = FAIL.
+  metodo: Inspección documental y prueba de aceptación.
+  estado: planned
+- id: CA-003
+  descripcion: Dada una necesidad incompleta, la salida contiene preguntas, hechos,
+    supuestos, preguntas abiertas, requisitos y criterios; cualquier afirmación no
+    sustentada aparece como NO DETERMINABLE.
+  metodo: Fixture fija y revisión contra esquema.
+  estado: planned
+- id: CA-005
+  descripcion: Para cada requisito requerido, el manifiesto enlaza criterio, prueba,
+    owner y evidencia; se rechaza un manifiesto al que le falte cualquiera.
+  metodo: Validación de manifiesto con caso válido e inválido.
+  estado: planned
+- id: CA-012
+  descripcion: En una ejecución con datos sintéticos, el escaneo de secretos no encuentra
+    tokens y el expediente no contiene datos institucionales.
+  metodo: Scan de secretos y revisión de artefactos.
+  estado: planned
+- id: CA-019
+  descripcion: El paquete contiene Summary, Evidence y Merge Danger y no se cierra
+    sin revisión independiente.
+  metodo: Checklist de gate y revisión de expediente.
+  estado: planned
+riesgos:
+- id: R-001
+  descripcion: Confundir PASS técnico con autorización institucional.
+  mitigacion: Estados independientes, aceptación humana explícita y CA-007/008/020.
+  clasificacion: HECHO
+  origen: libreria
+- id: R-005
+  descripcion: Evidencia sintética presentada como evidencia de producto.
+  mitigacion: Clasificación explícita de datos, fuente y entorno en manifiestos; etiqueta
+    NO DETERMINABLE cuando corresponda.
+  clasificacion: HECHO
+  origen: libreria
+- id: R-006
+  descripcion: Producto 02 reabierto por dependencia histórica.
+  mitigacion: Fuera de alcance, bloqueo explícito y CA-015.
+  clasificacion: HECHO
+  origen: libreria
+- id: R-01
+  descripcion: Riesgo declarado por el operador
+  mitigacion: Mitigación declarada
+  clasificacion: HECHO
+  origen: intake.riesgos[0]
+decisiones_humanas:
+- id: DH-01
+  decision: Aceptar o rechazar la propuesta del Advisor como insumo de trabajo.
+  owner: Director/owner
+  consecuencia: Sin aceptación no se abre Taller ni se ejecuta nada.
+  autorizacion_ejecucion: false
+- id: DH-02
+  decision: Resolver los NO DETERMINABLE antes de avanzar.
+  owner: Director/owner
+  consecuencia: Un NO DETERMINABLE no se rellena con valores inventados.
+  autorizacion_ejecucion: false
+- id: DH-03
+  decision: Autorizar el siguiente gate.
+  owner: Director/owner
+  consecuencia: Sin autorización explícita no se avanza de etapa.
+  autorizacion_ejecucion: false
+proximo_paso:
+  accion: solicitar_revision_independiente
+  detalle: Reporte válido; solicitar revisión independiente antes de cualquier transición.
+no_autorizado:
+- ejecucion
+- release
+- publicacion
+- produccion
+- merge
+- frappe
+- llm_proveedor
+trazabilidad:
+  completa: true
+  requisitos_sin_criterio: []
+  requisitos_sin_prueba: []
+  requisitos_sin_owner: []
