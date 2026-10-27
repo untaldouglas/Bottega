@@ -1,0 +1,15 @@
+schema_version: taller-policy/v1
+policy_id: taller-i2-v1
+provider: synthetic-local
+model: synthetic-action-v1
+fallback: none
+network: deny-all
+subprocess: deny-all
+limits:
+  max_stages: 3
+  max_artifacts_stage: 5
+  max_artifacts_initiative: 12
+  max_delivery_attempts: 2
+  max_validation_attempts: 2
+  max_duration_seconds: 300
+  max_artifact_bytes: 65536
