@@ -1,4 +1,4 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight advisor-test advisor-smoke advisor-negative advisor-validate
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight advisor-test advisor-smoke advisor-negative advisor-validate taller-test taller-validate auditor-test i2-validate
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
@@ -36,6 +36,16 @@ advisor-negative:
 	@echo 'advisor-negative: 3/3 casos negativos con exit code esperado'
 
 advisor-validate: advisor-test advisor-smoke advisor-negative
+
+taller-test:
+	NODE_ENV=test python3 -m unittest discover -s kit/tests -p 'test_taller*.py' -v
+
+taller-validate: advisor-validate taller-test
+
+auditor-test:
+	NODE_ENV=test python3 -m unittest discover -s kit/tests -p 'test_auditor*.py' -v
+
+i2-validate: taller-validate auditor-test
 
 
 glossary-add:
