@@ -1,4 +1,4 @@
-.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight advisor-test advisor-smoke advisor-negative advisor-validate taller-test taller-validate auditor-test i2-validate
+.PHONY: help setup lint typecheck unit e2e test security licenses audit hallmark-check preflight validate smoke container-build ci clean glossary-add glossary-check docs-check docs doctor bootstrap kit-test guardrails-check guardrails-preflight advisor-test advisor-smoke advisor-negative advisor-validate taller-test taller-validate auditor-test i2-validate i3-test i3-validate
 
 APP_DIR := app01
 NPM := npm --prefix $(APP_DIR)
@@ -46,6 +46,13 @@ auditor-test:
 	NODE_ENV=test python3 -m unittest discover -s kit/tests -p 'test_auditor*.py' -v
 
 i2-validate: taller-validate auditor-test
+
+i3-test:
+	NODE_ENV=test python3 -m unittest discover -s kit/tests -p 'test_i3.py' -v
+
+i3-validate: i3-test
+	python3 kit/scripts/i3_validate.py
+	@echo 'I3 runtime remains BLOCKED until independent gates pass.'
 
 
 glossary-add:

@@ -1,0 +1,90 @@
+{
+  "schema_version": "i3-source-evidence/v1",
+  "candidate_id": "frappe-v16.53.0-bench-v5.31.1",
+  "status": "VALIDATED_FOR_REVIEW_ONLY",
+  "acquired_at_utc": "2026-10-27T16:30:00Z",
+  "owner": "ingeniero",
+  "validator": "independent-review-required",
+  "sources": [
+    {
+      "source_id": "frappe-tag",
+      "url": "https://github.com/frappe/frappe.git",
+      "ref": "refs/tags/v16.53.0",
+      "commit": "e8d41dd0061a32ee781caefe5d0b0d2bb7c15362",
+      "method": "git ls-remote",
+      "http_status": 200,
+      "artifact": "tag-reference-only",
+      "size_bytes": null,
+      "sha256": null,
+      "license": "MIT",
+      "official": true
+    },
+    {
+      "source_id": "bench-tag",
+      "url": "https://github.com/frappe/bench.git",
+      "ref": "refs/tags/v5.31.1",
+      "commit": "660bc2898500dc33828056c1228e5a1d538573b1",
+      "method": "git ls-remote",
+      "http_status": 200,
+      "artifact": "tag-reference-only",
+      "size_bytes": null,
+      "sha256": null,
+      "license": "GPL-3.0-only",
+      "official": true
+    },
+    {
+      "source_id": "frappe-license",
+      "url": "https://raw.githubusercontent.com/frappe/frappe/v16.53.0/LICENSE",
+      "ref": "v16.53.0",
+      "commit": "e8d41dd0061a32ee781caefe5d0b0d2bb7c15362",
+      "method": "curl -fsSL",
+      "http_status": 200,
+      "artifact": "LICENSE",
+      "size_bytes": 1118,
+      "sha256": "bc6001a54ffcc4ab520424d7dbb85b293578efcdcb7d8f8055e00dddf942e5d7",
+      "license": "MIT",
+      "official": true
+    },
+    {
+      "source_id": "bench-license",
+      "url": "https://raw.githubusercontent.com/frappe/bench/v5.31.1/LICENSE",
+      "ref": "v5.31.1",
+      "commit": "660bc2898500dc33828056c1228e5a1d538573b1",
+      "method": "curl -fsSL",
+      "http_status": 200,
+      "artifact": "LICENSE",
+      "size_bytes": 35121,
+      "sha256": "e1c0ad728983d8a57335e52cf1064f1affd1d454173d8cebd3ed8b4a72b48704",
+      "license": "GPL-3.0-only",
+      "official": true
+    },
+    {
+      "source_id": "frappe-readme",
+      "url": "https://raw.githubusercontent.com/frappe/frappe/v16.53.0/README.md",
+      "ref": "v16.53.0",
+      "commit": "e8d41dd0061a32ee781caefe5d0b0d2bb7c15362",
+      "method": "curl -fsSL",
+      "http_status": 200,
+      "artifact": "README.md",
+      "size_bytes": 6512,
+      "sha256": "530eecc5dbb723ed6d7b621f18af4632523e028f08421fb5786e63d21b837a0b",
+      "license": "MIT",
+      "official": true
+    },
+    {
+      "source_id": "frappe-advisories",
+      "url": "https://api.github.com/repos/frappe/frappe/security-advisories?per_page=100",
+      "ref": "API snapshot",
+      "commit": null,
+      "method": "curl -fsSL",
+      "http_status": 200,
+      "artifact": "advisory-snapshot-redacted",
+      "size_bytes": 508969,
+      "sha256": "525550a98c4b35a912c13be852217db1105bc0175a5b93839d08a7b068826b19",
+      "license": null,
+      "official": true
+    }
+  ],
+  "prohibitions": ["latest", "unresolved-tags", "undigested-images", "ERPNext", "HRMS", "real-provider", "real-data"],
+  "runtime_gate": "BLOCKED_UNTIL_IMAGE_OS_GATE_AND_BENCH_GPL_REVIEW_PASS"
+}

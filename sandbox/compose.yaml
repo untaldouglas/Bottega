@@ -1,0 +1,28 @@
+services:
+  frappe-sandbox:
+    image: "${I3_IMAGE_DIGEST:?I3_IMAGE_DIGEST must be an accepted immutable digest}"
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    env_file: [.env]
+    environment:
+      I3_ENVIRONMENT: local-sandbox
+      I3_PROVIDER: synthetic-local
+    ports:
+      - "127.0.0.1:${I3_HTTP_PORT:-18753}:8000"
+    networks: [i3_internal]
+    depends_on: [db, cache]
+    tmpfs: [/tmp]
+  db:
+    image: "${I3_DB_IMAGE_DIGEST:?I3_DB_IMAGE_DIGEST must be an accepted immutable digest}"
+    user: "999:999"
+    networks: [i3_internal]
+  cache:
+    image: "${I3_CACHE_IMAGE_DIGEST:?I3_CACHE_IMAGE_DIGEST must be an accepted immutable digest}"
+    user: "999:999"
+    networks: [i3_internal]
+networks:
+  i3_internal:
+    internal: true
+    name: bottega-i3-internal

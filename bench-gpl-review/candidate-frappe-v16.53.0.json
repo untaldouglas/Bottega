@@ -1,0 +1,10 @@
+{
+  "schema_version": "bench-gpl-review/v1",
+  "candidate_id": "frappe-v16.53.0-bench-v5.31.1",
+  "decision": "BLOCKED",
+  "owner": "Douglas Galindo",
+  "decision_required": "PASS",
+  "components": [{"name":"bench","version":"5.31.1","commit":"660bc2898500dc33828056c1228e5a1d538573b1","license":"GPL-3.0-only"},{"name":"frappe","version":"16.53.0","commit":"e8d41dd0061a32ee781caefe5d0b0d2bb7c15362","license":"MIT"}],
+  "reason": "No se materializa instalación ni imagen compartida sin análisis competente y aceptación explícita de obligaciones GPL-3.0-only.",
+  "evidence_manifest": "docs/increment3/source-evidence-manifest.json"
+}

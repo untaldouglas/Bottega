@@ -1,0 +1,14 @@
+{
+  "schema_version": "image-os-gate/v1",
+  "candidate_id": "frappe-v16.53.0-bench-v5.31.1",
+  "decision": "BLOCKED",
+  "owner": "Douglas Galindo",
+  "accepted": false,
+  "registry": null,
+  "repository": null,
+  "tag": null,
+  "digest": null,
+  "architecture": "linux/amd64",
+  "reason": "La base Linux/imagen no puede elegirse por intuición; falta soporte oficial, proveedor autorizado y digest aceptado.",
+  "latest_forbidden": true
+}
