@@ -46,7 +46,8 @@ RUN bench init --frappe-branch v16.53.0 --skip-redis-config-generation --no-back
 # Configuración de runtime: db y redis apuntan a los servicios internos del sandbox.
 COPY --chown=frappe:frappe common_site_config.json /home/frappe/frappe-bench/sites/common_site_config.json
 
-ENV PATH="/home/frappe/frappe-bench/env/bin:${PATH}"
+ENV PATH="/home/frappe/frappe-bench/env/bin:${PATH}" \
+    SITES_PATH="/home/frappe/frappe-bench/sites"
 WORKDIR /home/frappe/frappe-bench
 
-CMD ["bench", "--help"]
+CMD ["gunicorn", "--chdir", "/home/frappe/frappe-bench/sites", "-b", "0.0.0.0:8000", "-w", "1", "-t", "120", "frappe.app:application"]
