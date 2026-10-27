@@ -16,7 +16,7 @@ services:
       I3_PROVIDER: synthetic-local
     ports:
       - "127.0.0.1:${I3_HTTP_PORT:-18753}:8000"
-    networks: [i3_internal]
+    networks: [i3_internal, i3_loopback]
     depends_on:
       db:
         condition: service_healthy
@@ -44,6 +44,14 @@ services:
 networks:
   i3_internal:
     internal: true
+  i3_loopback:
+    # Publica 127.0.0.1:18753->8000 sin egress a internet: bridge sin masquerade,
+    # de modo que el puerto se publica (docker port no null) pero el contenedor
+    # no puede alcanzar internet (conexiones salientes sin retorno). db/cache
+    # permanecen solo en i3_internal (internal: true, sin puertos host).
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
 volumes:
   frappe_sites:
     name: bottega_i3_frappe_sites
