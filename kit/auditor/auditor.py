@@ -18,7 +18,7 @@ def audit(snapshot: dict, reviewer_id: str) -> dict:
     checks.append({"id":"CA-007","status":"PASS" if set(("product", "release", "publication")) <= decisions.keys() else "BLOCKED","reason":"decisiones separadas"})
     checks.append({"id":"CA-008","status":"PASS" if decisions.get("publication") == "NOT_AUTHORIZED" else "BLOCKED","reason":"autorización humana"})
     policy = snapshot.get("policy", {})
-    checks.append({"id":"CA-009","status":"PASS" if policy.get("fallback") in {"none", "authorized"} and policy.get("network") == "deny-all" else "BLOCKED","reason":"política de proveedor"})
+    checks.append({"id":"CA-009","status":"PASS" if policy.get("fallback") in {"none", "authorized"} and policy.get("network") == "deny-all" and policy.get("subprocess") == "deny-all" else "BLOCKED","reason":"política de proveedor"})
     counters = snapshot.get("counters", {})
     checks.append({"id":"CA-010","status":"PASS" if snapshot.get("manifests") else "NEEDS_WORK","reason":"manifiestos"})
     checks.append({"id":"CA-011","status":"PASS" if all(k in counters for k in ("delivery_attempt", "provider_retry", "validation_attempt", "operational_cleanup")) else "BLOCKED","reason":"contadores separados"})
@@ -31,14 +31,28 @@ def audit(snapshot: dict, reviewer_id: str) -> dict:
     packet = snapshot.get("review_packet", {})
     checks.append({"id":"CA-019","status":"PASS" if all(packet.get(k) for k in ("Summary", "Evidence", "Merge Danger")) else "BLOCKED","reason":"paquete de revisión"})
     checks.append({"id":"CA-020","status":"PASS" if decisions.get("publication") != "AUTHORIZED" else "BLOCKED","reason":"no autorización implícita"})
+    ledger = snapshot.get("provider_ledger")
+    ledger_fields = {"requested_provider", "requested_model", "effective_provider", "effective_model", "selection_reason", "fallback", "network", "subprocess", "cost"}
+    ledger_ok = isinstance(ledger, list) and bool(ledger)
+    for entry in ledger or []:
+        ledger_ok = ledger_ok and isinstance(entry, dict) and ledger_fields <= entry.keys()
+        if isinstance(entry, dict):
+            cost = entry.get("cost", {})
+            ledger_ok = ledger_ok and isinstance(cost, dict) and {"class", "amount"} <= cost.keys()
+            ledger_ok = ledger_ok and entry.get("requested_provider") == policy.get("provider") and entry.get("requested_model") == policy.get("model")
+            ledger_ok = ledger_ok and entry.get("fallback") in {"none", "authorized"}
+            if entry.get("fallback") == "none":
+                ledger_ok = ledger_ok and entry.get("effective_provider") == policy.get("provider") and entry.get("effective_model") == policy.get("model")
+    checks.append({"id":"CA-009-LEDGER","status":"PASS" if ledger_ok else "BLOCKED","reason":"provider_ledger completo y consistente"})
     try:
         verify_manifest_chain(snapshot.get("manifests", []), snapshot.get("events", [])); chain_ok = True
     except (TallerError, TypeError): chain_ok = False
     refs = {m.get("chain_sha256") for m in snapshot.get("manifests", []) if isinstance(m, dict)}
-    if any(e.get("manifest_ref") not in refs for e in snapshot.get("events", []) if isinstance(e, dict) and e.get("manifest_ref")): chain_ok = False
+    required_ref_events = {"RUN_COMPLETED"}
+    if any((e.get("event_type") in required_ref_events and not e.get("manifest_ref")) or (e.get("manifest_ref") not in refs) for e in snapshot.get("events", []) if isinstance(e, dict)): chain_ok = False
     if not chain_ok:
         for c in checks:
             if c["id"] in {"CA-005", "CA-010", "CA-017", "CA-018"}: c["status"] = "BLOCKED"
-    blocked = (["grant"] if not grant_ok else []) + (["scan"] if findings else []) + (["manifest-chain"] if not chain_ok else [])
+    blocked = (["grant"] if not grant_ok else []) + (["scan"] if findings else []) + (["manifest-chain"] if not chain_ok else []) + (["provider-ledger"] if not ledger_ok else [])
     verdict = "BLOCKED" if any(c["status"] == "BLOCKED" for c in checks) else ("NEEDS_WORK" if any(c["status"] == "NEEDS_WORK" for c in checks) else "PASS")
     return {"schema_version":"taller-audit/v1","audit_id":"AUDIT-"+sha256_canonical(snapshot)[:10].upper(),"initiative_id":snapshot.get("initiative_id"),"snapshot_sha256":"sha256:"+sha256_canonical(snapshot),"reviewer_id":reviewer_id,"implementer_ids":sorted(x for x in implementers if isinstance(x, str)),"verdict":verdict,"checks":checks,"product_decision":decisions.get("product","NOT_ACCEPTED"),"release_decision":decisions.get("release","NOT_READY"),"publication_decision":decisions.get("publication","NOT_AUTHORIZED"),"findings":blocked}

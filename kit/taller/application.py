@@ -3,10 +3,12 @@ from __future__ import annotations
 import json, os
 from pathlib import Path
 from .domain import Result, TallerError, Policy, verify_grant, append_manifest, scan_safe, verify_manifest_chain
-from .adapters.synthetic import execute
+from .adapters.synthetic import SyntheticProvider
 
 class TallerService:
-    def __init__(self, root: str | Path): self.root=Path(root); self.root.mkdir(parents=True, exist_ok=True)
+    def __init__(self, root: str | Path, provider=None):
+        self.root=Path(root); self.root.mkdir(parents=True, exist_ok=True)
+        self.provider = provider or SyntheticProvider()
     def _path(self, iid): return self.root / iid / "case.json"
     def _manifest_path(self, iid): return self.root / iid / "manifests.ndjson"
     def _load(self, iid):
@@ -32,9 +34,9 @@ class TallerService:
         if findings: return Result("BLOCKED",findings[0]["code"],"contenido fuera de alcance")
         try: verify_grant(grant,"operator-local-synthetic","create_initiative",f"initiative:{iid}",initiative["data_classification"],"local-sandbox",now)
         except TallerError as e: return Result("BLOCKED",e.code,e.message_safe)
-        s={**initiative,"schema_version":"taller-initiative/v1","operator_grant":grant,"classification":"SYNTHETIC","policy":{"id":policy.policy_id,"provider":policy.provider,"model":policy.model,"fallback":policy.fallback,"network":policy.network,"subprocess":policy.subprocess},"execution_state":"READY","review_state":"NOT_REVIEWED","decisions":{"product":"NOT_ACCEPTED","release":"NOT_READY","publication":"NOT_AUTHORIZED"},"stages":[{"stage_id":"STAGE-01","dependencies":[],"gate":{"status":"APPROVED","evidence":"synthetic-grant"},"implementer_id":"operator-local-synthetic"}],"counters":{"delivery_attempt":0,"provider_retry":0,"validation_attempt":0,"operational_cleanup":0},"provider_ledger":[],"review_packet":{"Summary":"synthetic local run","Evidence":"manifests and event chain","Merge Danger":"none"},"revision":0,"events":[],"manifests":[],"idempotency":{}}
+        s={**initiative,"schema_version":"taller-initiative/v1","operator_grant":grant,"classification":"SYNTHETIC","policy":{"id":policy.policy_id,"provider":policy.provider,"model":policy.model,"fallback":policy.fallback,"network":policy.network,"subprocess":policy.subprocess},"execution_state":"READY","circuit_state":"CLOSED","review_state":"NOT_REVIEWED","decisions":{"product":"NOT_ACCEPTED","release":"NOT_READY","publication":"NOT_AUTHORIZED"},"stages":[{"stage_id":"STAGE-01","dependencies":[],"gate":{"status":"APPROVED","evidence":"synthetic-grant"},"implementer_id":"operator-local-synthetic"}],"counters":{"delivery_attempt":0,"provider_retry":0,"validation_attempt":0,"operational_cleanup":0},"provider_ledger":[],"review_packet":{"Summary":"synthetic local run","Evidence":"manifests and event chain","Merge Danger":"none"},"revision":0,"events":[],"manifests":[],"idempotency":{}}
         self._save(iid,s); self._manifest_path(iid).touch(); return Result("PASS",revision=0,data={"initiative_id":iid})
-    def start(self, iid: str, stage_id: str, key: str, operator: str, expected: int, now: str) -> Result:
+    def start(self, iid: str, stage_id: str, key: str, operator: str, expected: int, now: str, execution_hook=None) -> Result:
         s=self._load(iid)
         if key in s["idempotency"]:
             old=s["idempotency"][key]; return Result(status=old["status"], error_code=old.get("error_code"), message_safe=old.get("message_safe", ""), revision=old.get("revision", 0), event_refs=old.get("event_refs", []), manifest_ref=old.get("manifest_ref"), idempotent_replay=True, data=old.get("data", {}))
@@ -43,11 +45,24 @@ class TallerService:
         try: verify_grant(s["operator_grant"],operator,"start_run",f"initiative:{iid}",s["data_classification"],"local-sandbox",now)
         except TallerError as e: return Result("BLOCKED",e.code,e.message_safe)
         if s["execution_state"] not in {"READY","PAUSED"}: return Result("BLOCKED","POLICY_BLOCKED","estado no ejecutable")
-        out=execute({"capability":"synthetic.action.v1","input":{"fixture":stage_id}})
+        if s.get("circuit_state", "CLOSED") == "OPEN": return Result("BLOCKED","CIRCUIT_OPEN","circuito de proveedor abierto")
+        s["execution_state"]="RUNNING"; s["revision"]+=1
+        started=f"EVT-{s['revision']:06d}"; s["events"].append({"event_id":started,"event_type":"RUN_STARTED"})
+        self._save(iid,s)
+        if execution_hook is not None: execution_hook(self, iid)
+        s=self._load(iid)
+        if s["execution_state"] == "PAUSED": return Result("BLOCKED","INTERRUPTED", "ejecución pausada", revision=s["revision"])
+        out=self.provider.execute({"capability":"synthetic.action.v1","input":{"fixture":stage_id}})
+        ledger={"requested_provider":s["policy"]["provider"],"requested_model":s["policy"]["model"],"effective_provider":out.get("effective_provider","synthetic-local"),"effective_model":out.get("effective_model","synthetic-action-v1"),"selection_reason":"primary","fallback":"none","network":"deny-all","subprocess":"deny-all","cost":{"class":"SYNTHETIC_NON_BILLABLE","amount":out.get("cost_amount",0)}}
+        s["provider_ledger"].append(ledger)
+        if out.get("status_code") == 429:
+            s["circuit_state"]="OPEN"; s["execution_state"]="PAUSED"; s["counters"]["provider_retry"]+=1; s["revision"]+=1
+            ev=f"EVT-{s['revision']:06d}"; s["events"].append({"event_id":ev,"event_type":"PROVIDER_429"}); self._save(iid,s)
+            return Result("BLOCKED","PROVIDER_429","primer 429 abrió el circuito",revision=s["revision"],event_refs=[ev],data={"counters":s["counters"]})
         payload={"stage_id":stage_id,"artifact":out["artifact"],"sha256":out["sha256"],"classification":"SYNTHETIC"}
         man=append_manifest(s["manifests"][-1] if s["manifests"] else None,payload,len(s["manifests"])+1)
         with self._manifest_path(iid).open("a", encoding="utf-8") as stream: stream.write(json.dumps(man, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n")
-        s["manifests"].append(man); s["execution_state"]="CLOSED"; s["revision"]+=1; ev=f"EVT-{s['revision']:06d}"; s["events"].append({"event_id":ev,"event_type":"RUN_COMPLETED","manifest_ref":man["chain_sha256"]}); s["counters"].update(delivery_attempt=1, validation_attempt=1); s["provider_ledger"].append({"provider":"synthetic-local","model":"synthetic-action-v1","fallback":"none","reason":"primary"})
+        s["manifests"].append(man); s["execution_state"]="CLOSED"; s["revision"]+=1; ev=f"EVT-{s['revision']:06d}"; s["events"].append({"event_id":ev,"event_type":"RUN_COMPLETED","manifest_ref":man["chain_sha256"]}); s["counters"].update(delivery_attempt=1, validation_attempt=1)
         r=Result("PASS",revision=s["revision"],event_refs=[ev],manifest_ref=man["chain_sha256"],data={"artifact":out["artifact"],"counters":{"delivery_attempt":1,"provider_retry":0,"validation_attempt":1,"operational_cleanup":0}})
         s["idempotency"][key]=r.as_dict(); self._save(iid,s); return r
     def pause(self,iid,key,operator,expected,reason,now):
@@ -65,4 +80,5 @@ class TallerService:
         except TallerError as e: return Result("BLOCKED",e.code,e.message_safe)
         if key in s["idempotency"]: return Result("PASS", revision=s["revision"], idempotent_replay=True, message_safe="reanudación ya registrada")
         if s["execution_state"]=="CLOSED": return Result("BLOCKED","POLICY_BLOCKED","una ejecución cerrada es terminal")
+        if s.get("circuit_state") == "OPEN": return Result("BLOCKED","CIRCUIT_OPEN","circuito de proveedor abierto")
         s["execution_state"]="READY"; self._save(iid,s); return self.start(iid,"STAGE-01",key,operator,s["revision"],now)
