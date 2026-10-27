@@ -1,0 +1,24 @@
+{
+  "schema_version": "bench-gpl-review/v1",
+  "candidate_id": "frappe-v16.53.0-bench-v5.31.1",
+  "decision": "PASS",
+  "owner": "Douglas Galindo",
+  "decision_timestamp_utc": "2026-10-27T16:30:00Z",
+  "scope": "sandbox interno aislado del Incremento 3. Sin distribucion, redistribucion, entrega de imagen/paquete, servicio ni publicacion.",
+  "components": [
+    {"name": "bench", "version": "5.31.1", "commit": "660bc2898500dc33828056c1228e5a1d538573b1", "license": "GPL-3.0-only"},
+    {"name": "frappe", "version": "16.53.0", "commit": "e8d41dd0061a32ee781caefe5d0b0d2bb7c15362", "license": "MIT"}
+  ],
+  "usage": "internal-sandbox-only",
+  "distribution": "none",
+  "recipients": [],
+  "obligations_identified": [
+    "Bench v5.31.1 es GPL-3.0-only; su uso queda limitado a instalacion y validacion interna del sandbox.",
+    "No se autoriza entregar, distribuir ni publicar una imagen o paquete que incluya Bench.",
+    "Frappe v16.53.0 es MIT y no hereda la obligacion GPL de Bench."
+  ],
+  "pending_questions": ["Esta decision no constituye asesoria legal formal."],
+  "responsible": "Douglas Galindo",
+  "evidence_manifest": "docs/increment3/source-evidence-manifest.json",
+  "bench_license_evidence": {"file": "bench-LICENSE.txt", "size_bytes": 35121, "sha256": "e1c0ad728983d8a57335e52cf1064f1affd1d454173d8cebd3ed8b4a72b48704"}
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "image-os-gate/v1",
+  "candidate_id": "frappe-v16.53.0-bench-v5.31.1",
+  "decision": "PASS",
+  "owner": "Douglas Galindo",
+  "accepted": true,
+  "accepted_at_utc": "2026-10-27T16:30:00Z",
+  "registry": "docker.io",
+  "repository": "library/python",
+  "tag": "3.14.8-slim-trixie",
+  "digest": "sha256:9b629e83e1a517e01eaf7a36362563c0c7f620d3e4747f7dcf79564e290b7b48",
+  "architecture": "linux/amd64",
+  "base": "debian:trixie-slim (Debian 13)",
+  "base_digest": "sha256:4876fdea29cac1a33a3195f1eb1952feb1fca7dd6dd00be3e2f1879cf20d34d2",
+  "support": {
+    "official_url": "https://github.com/docker-library/python",
+    "statement": "Docker Hub Official Image; base Debian trixie-slim verificada en /etc/os-release (Debian GNU/Linux 13 trixie).",
+    "evidence_sha256": "6a96b41e79f6264570142aee68e9dccd8bf1412dcdcbf52cafdf211116ddaf1a"
+  },
+  "provenance": {
+    "source_url": "https://github.com/docker-library/python.git#7cc547b3ff8d45d540cd23144227af126a79d60c:3.14/slim-trixie",
+    "builder": "Docker Official Images",
+    "attestation_ref": "docker.io/library/python:3.14.8-slim-trixie@sha256:9b629e83e1a517e01eaf7a36362563c0c7f620d3e4747f7dcf79564e290b7b48",
+    "evidence_sha256": "20d301bd6264da846d0256bbb7e4b60bb1df172bd5f843d2003885fd7f3d56a6"
+  },
+  "license": {
+    "declared": "MIT (docker-library Dockerfile) / Debian trixie-slim / Python PSF-2.0",
+    "evidence_ref": "docker.io/library/python (Docker Hub Official Image)",
+    "decision": "PASS"
+  },
+  "observed_at_utc": "2026-10-27T16:40:00Z",
+  "verified": {
+    "digest_match": true,
+    "architecture_match": true,
+    "base_match": true,
+    "python_version": "3.14.8",
+    "pip_version": "26.2.1"
+  },
+  "latest_forbidden": true
+}

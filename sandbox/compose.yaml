@@ -1,0 +1,57 @@
+name: bottega_i3_frappe
+
+services:
+  app:
+    image: bottega-i3-frappe:16.53.0-bench5.31.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "1000:1000"
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    env_file:
+      - .env
+    environment:
+      I3_ENVIRONMENT: local-sandbox
+      I3_PROVIDER: synthetic-local
+    ports:
+      - "127.0.0.1:${I3_HTTP_PORT:-18753}:8000"
+    networks: [i3_internal, i3_loopback]
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    tmpfs: [/tmp]
+    volumes:
+      - frappe_sites:/home/frappe/frappe-bench/sites
+  db:
+    image: mariadb:11.8@sha256:c4124d1afa875e47f2892edf26b482fa54f796e2f342d3717a04ca091a22a9bd
+    env_file:
+      - .env
+    environment:
+      MARIADB_DATABASE: i3_frappe
+      MARIADB_USER: i3_frappe
+    networks: [i3_internal]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  cache:
+    image: redis:7.4-alpine@sha256:6ba19c50b56777f5c11c58eff8ddb69d0d5f27ba131cffb63f180ccfd43c66af
+    networks: [i3_internal]
+networks:
+  i3_internal:
+    internal: true
+  i3_loopback:
+    # Publica 127.0.0.1:18753->8000 sin egress a internet: bridge sin masquerade,
+    # de modo que el puerto se publica (docker port no null) pero el contenedor
+    # no puede alcanzar internet (conexiones salientes sin retorno). db/cache
+    # permanecen solo en i3_internal (internal: true, sin puertos host).
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+volumes:
+  frappe_sites:
+    name: bottega_i3_frappe_sites
