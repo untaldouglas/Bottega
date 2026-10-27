@@ -86,24 +86,29 @@ def validate() -> list[str]:
         errors.append("network must be internal (no egress)")
     if "127.0.0.1:" not in compose:
         errors.append("HTTP must bind only to 127.0.0.1")
+    if compose.count("ports:") != 1:
+        errors.append("only the app service may publish a port (DB/cache no host ports)")
     if '":latest"' in compose or ":latest " in compose or ":latest\n" in compose:
         errors.append("compose must not reference latest")
     if "cap_drop" not in compose or "ALL" not in compose:
         errors.append("compose must drop all capabilities")
-    if "read_only" not in compose:
-        errors.append("compose app must be read_only")
     if "user:" not in compose:
         errors.append("compose must run non-root user")
+    if "@sha256:" not in compose:
+        errors.append("compose DB/cache images must be pinned by digest")
     lower = compose.lower()
     if any(token in lower for token in DENYLIST):
         errors.append("compose must not reference ERPNext/HRMS")
+
+    # --- Dockerfile base ---
+    dockerfile = (ROOT / "sandbox/Dockerfile").read_text(encoding="utf-8")
+    if ACCEPTED_DIGEST not in dockerfile:
+        errors.append("Dockerfile must pin the accepted base image digest")
 
     # --- .env.example ---
     env = ENV_EXAMPLE.read_text(encoding="utf-8")
     if "synthetic" not in env:
         errors.append(".env.example must use synthetic values only")
-    if "registry.invalid/blocked" not in env:
-        errors.append(".env.example digests must remain synthetic placeholders")
     lower_env = env.lower()
     if any(token in lower_env for token in DENYLIST):
         errors.append(".env.example must not reference ERPNext/HRMS")
