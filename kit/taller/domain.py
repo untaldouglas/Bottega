@@ -20,7 +20,10 @@ def sha256_canonical(value: Any) -> str: return sha256_bytes(canonical_json(valu
 def scan_safe(value: Any, path: str = "$", findings: list[dict] | None = None) -> list[dict]:
     findings = findings if findings is not None else []
     if isinstance(value, dict):
-        for k, v in value.items(): scan_safe(v, f"{path}.{k}", findings)
+        for k, v in value.items():
+            if isinstance(k, str) and re.search(r"(?i)(producto\s*02|frappe|producci[oó]n|secret|token|password|/home/|\.env|\.ssh)", k):
+                findings.append({"code": "OUT_OF_SCOPE", "path": f"{path}.<key>", "message": "contenido fuera de alcance o sensible"})
+            scan_safe(v, f"{path}.{k}", findings)
     elif isinstance(value, list):
         for i, v in enumerate(value): scan_safe(v, f"{path}[{i}]", findings)
     elif isinstance(value, str) and FORBIDDEN.search(value):
@@ -75,3 +78,24 @@ def append_manifest(previous: dict | None, payload: dict, sequence: int) -> dict
     body["chain_sha256"] = "sha256:" + sha256_canonical(body)
     body["immutable"] = True
     return body
+
+def verify_manifest_chain(manifests: list[dict], events: list[dict] | None = None) -> None:
+    previous = None
+    refs = {e.get("manifest_ref") for e in (events or []) if e.get("manifest_ref")}
+    for expected_sequence, manifest in enumerate(manifests, 1):
+        if not isinstance(manifest, dict) or manifest.get("sequence_no") != expected_sequence:
+            raise TallerError("HASH_MISMATCH", "secuencia de manifiesto inválida")
+        payload = manifest.get("payload")
+        if not isinstance(payload, dict): raise TallerError("HASH_MISMATCH", "payload de manifiesto inválido")
+        if manifest.get("payload_sha256") != "sha256:" + sha256_canonical(payload):
+            raise TallerError("HASH_MISMATCH", "hash de payload inválido")
+        expected_previous = previous.get("chain_sha256") if previous else None
+        if manifest.get("previous_manifest_sha256") != expected_previous:
+            raise TallerError("HASH_MISMATCH", "cadena de manifiestos truncada o alterada")
+        body = {k: manifest.get(k) for k in ("schema_version", "sequence_no", "payload", "previous_manifest_sha256", "payload_sha256")}
+        if manifest.get("chain_sha256") != "sha256:" + sha256_canonical(body):
+            raise TallerError("HASH_MISMATCH", "hash de cadena inválido")
+        if manifest.get("immutable") is not True: raise TallerError("HASH_MISMATCH", "manifiesto no inmutable")
+        previous = manifest
+    if events and any(ref not in {m.get("chain_sha256") for m in manifests} for ref in refs):
+        raise TallerError("HASH_MISMATCH", "evento sin manifiesto relacionado")

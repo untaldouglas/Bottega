@@ -17,4 +17,17 @@ class TallerCoreTests(unittest.TestCase):
    snap=json.loads((Path(d)/"INITIATIVE-SYNTHETIC-01"/"case.json").read_text()); self.assertEqual(len(snap["manifests"]),1); self.assertEqual(snap["decisions"]["publication"],"NOT_AUTHORIZED")
  def test_manifest_append_only(self):
   a=append_manifest(None,{"x":1},1); b=append_manifest(a,{"x":2},2); self.assertEqual(b["previous_manifest_sha256"],a["chain_sha256"])
+ def test_closed_pause_resume_is_terminal(self):
+  with tempfile.TemporaryDirectory() as d:
+   svc=TallerService(d); svc.create(self.init(),self.grant(),Policy(),"2026-10-27T00:00:00Z")
+   done=svc.start("INITIATIVE-SYNTHETIC-01","STAGE-01","closed-key-000001","operator-local-synthetic",0,"2026-10-27T00:00:00Z")
+   paused=svc.pause("INITIATIVE-SYNTHETIC-01","pause-key-000001","operator-local-synthetic",done.revision,"reason","2026-10-27T00:00:00Z")
+   resumed=svc.resume("INITIATIVE-SYNTHETIC-01","resume-key-000001","operator-local-synthetic",done.revision,"2026-10-27T00:00:00Z")
+   self.assertEqual(paused.status,"BLOCKED"); self.assertEqual(resumed.status,"BLOCKED")
+   snap=json.loads((Path(d)/"INITIATIVE-SYNTHETIC-01"/"case.json").read_text()); self.assertEqual(len(snap["manifests"]),1)
+ def test_manifest_tampering_blocks_load(self):
+  with tempfile.TemporaryDirectory() as d:
+   svc=TallerService(d); svc.create(self.init(),self.grant(),Policy(),"2026-10-27T00:00:00Z"); svc.start("INITIATIVE-SYNTHETIC-01","STAGE-01","tamper-key-00001","operator-local-synthetic",0,"2026-10-27T00:00:00Z")
+   p=Path(d)/"INITIATIVE-SYNTHETIC-01"/"manifests.ndjson"; p.write_text(p.read_text().replace("synthetic-pass","altered"))
+   with self.assertRaises(TallerError): svc.start("INITIATIVE-SYNTHETIC-01","STAGE-01","next-key-000001","operator-local-synthetic",1,"2026-10-27T00:00:00Z")
 if __name__=="__main__": unittest.main()
